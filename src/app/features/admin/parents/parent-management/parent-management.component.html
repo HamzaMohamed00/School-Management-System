@@ -1,0 +1,202 @@
+<div class="container-fluid py-4">
+    <!-- Header Area -->
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <div>
+            <h2 class="fw-bold mb-1">إدارة أولياء الأمور</h2>
+            <p class="text-secondary mb-0">إضافة وتعديل وحذف بيانات أولياء الأمور والربط مع الطلاب</p>
+        </div>
+        <button class="btn btn-primary rounded-pill px-4" (click)="openAddModal()">
+            <i class="fas fa-plus me-2"></i> إضافة ولي أمر جديد
+        </button>
+    </div>
+
+    <!-- Stats summary -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-3 rounded-4 bg-primary text-white">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-white-50 p-3 me-3">
+                        <i class="fas fa-users fs-4"></i>
+                    </div>
+                    <div>
+                        <div class="small opacity-75">إجمالي المسجلين</div>
+                        <div class="fs-4 fw-bold">{{ parents.length }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Table -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-secondary">
+                        <tr>
+                            <th class="ps-4">الاسم الكامل</th>
+                            <th>البريد الإلكتروني</th>
+                            <th>رقم الهاتف</th>
+                            <th>العنوان</th>
+                            <th>عدد الأبناء</th>
+                            <th class="text-end pe-4">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let parent of parents">
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm rounded-circle bg-light d-flex align-items-center justify-content-center me-3 fw-bold text-primary">
+                                        {{ parent.fullName.charAt(0) }}
+                                    </div>
+                                    <span class="fw-medium">{{ parent.fullName }}</span>
+                                </div>
+                            </td>
+                            <td>{{ parent.email }}</td>
+                            <td>{{ parent.phone }}</td>
+                            <td class="text-truncate" style="max-width: 150px;">{{ parent.address }}</td>
+                            <td>
+                                <span class="badge bg-soft-info text-info rounded-pill px-3">{{ parent.childrenCount }} طلاب</span>
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="btn-group shadow-none">
+                                    <button class="btn btn-sm btn-light border me-1" [routerLink]="['/chat', parent.userId || parent.UserId]" title="تواصل">
+                                        <i class="far fa-comments text-success"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-light border me-1" (click)="openLinkModal(parent)" title="ربط الأبناء">
+                                        <i class="fas fa-link text-info"></i>
+                                    </button>
+                                    <button class="btn btn-icon btn-light-primary rounded-circle me-1" (click)="openEditModal(parent)">
+                                        <i class="far fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-icon btn-light-danger rounded-circle" (click)="confirmDelete(parent.id)">
+                                        <i class="far fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="parents.length === 0 && !loading">
+                            <td colspan="6" class="text-center py-5 text-muted italic">لا يوجد أولياء أمور مسجلين حالياً</td>
+                        </tr>
+                        <tr *ngIf="loading">
+                            <td colspan="6" class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-backdrop-custom d-flex align-items-center justify-content-center p-3" *ngIf="showModal">
+    <div class="modal-card rounded-4 shadow-lg w-100" style="max-width: 500px;">
+        <div class="modal-header border-bottom p-4">
+            <h5 class="fw-bold mb-0">{{ isEditMode ? 'تعديل بيانات ولي الأمر' : 'إضافة ولي أمر جديد' }}</h5>
+            <button class="btn-close shadow-none" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body p-4">
+            <div class="mb-3">
+                <label class="form-label fw-bold small mb-1">الاسم الكامل</label>
+                <input type="text" class="form-control rounded-3" [(ngModel)]="currentParent.fullName" placeholder="أدخل اسم ولي الأمر الرباعي">
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold small mb-1">البريد الإلكتروني</label>
+                <input type="email" class="form-control rounded-3" [(ngModel)]="currentParent.email" placeholder="example@email.com">
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold small mb-1">رقم الهاتف</label>
+                <input type="tel" class="form-control rounded-3" [(ngModel)]="currentParent.phone" placeholder="01xxxxxxxxx">
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold small mb-1">العنوان بالتفصيل</label>
+                <textarea class="form-control rounded-3" [(ngModel)]="currentParent.address" rows="2"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer border-top p-3 bg-light rounded-bottom-4">
+            <button class="btn btn-link text-secondary text-decoration-none px-4 me-2" (click)="closeModal()">إلغاء</button>
+            <button class="btn btn-primary rounded-pill px-5" (click)="saveParent()" [disabled]="submitting">
+                <span *ngIf="!submitting">{{ isEditMode ? 'تحديث البيانات' : 'حفظ ولي الأمر' }}</span>
+                <span *ngIf="submitting" class="spinner-border spinner-border-sm"></span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-backdrop-custom d-flex align-items-center justify-content-center p-3" *ngIf="showDeleteModal">
+    <div class="modal-card rounded-4 shadow-lg w-100" style="max-width: 400px;">
+        <div class="p-4 text-center">
+            <div class="bg-light-danger text-danger rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                <i class="fas fa-exclamation-triangle fs-1"></i>
+            </div>
+            <h4 class="fw-bold mb-3">هل أنت متأكد؟</h4>
+            <p class="text-secondary mb-0">سيتم حذف بيانات ولي الأمر نهائياً. لا يمكن التراجع عن هذا الإجراء.</p>
+        </div>
+        <div class="modal-footer border-top p-3 bg-light rounded-bottom-4">
+            <button class="btn btn-link text-secondary text-decoration-none w-50" (click)="showDeleteModal = false">إلغاء</button>
+            <button class="btn btn-danger rounded-pill w-50 py-2" (click)="deleteParent()" [disabled]="submitting">حذف الآن</button>
+        </div>
+    </div>
+</div>
+
+<!-- Link Students Modal -->
+<div class="modal-backdrop-custom d-flex align-items-center justify-content-center p-3" *ngIf="showLinkModal">
+    <div class="modal-card rounded-4 shadow-lg w-100" style="max-width: 600px; height: 80vh; display: flex; flex-direction: column;">
+        <div class="modal-header border-bottom p-4">
+            <div>
+                <h5 class="fw-bold mb-0">ربط الأبناء بولي الأمر</h5>
+                <p class="text-secondary small mb-0">{{ currentParent.fullName }}</p>
+            </div>
+            <button class="btn-close shadow-none" (click)="showLinkModal = false"></button>
+        </div>
+        
+        <div class="p-3 border-bottom bg-light">
+            <div class="input-group">
+                <span class="input-group-text border-end-0"><i class="fas fa-search text-muted"></i></span>
+                <input type="text" class="form-control border-start-0 shadow-none ps-0" placeholder="بحث عن طالب بالاسم أو البريد..." [(ngModel)]="searchQuery">
+            </div>
+        </div>
+
+        <div class="modal-body p-0 overflow-auto flex-grow-1">
+            <div class="list-group list-group-flush">
+                <div *ngFor="let student of filteredStudents" 
+                     class="list-group-item list-group-item-action d-flex align-items-center p-3"
+                     (click)="toggleStudentSelection(student.id)"
+                     style="cursor: pointer;">
+                    <div class="form-check mb-0 me-3">
+                        <input class="form-check-input" type="checkbox" [checked]="selectedStudentIds.includes(student.id)" (click)="$event.stopPropagation()">
+                    </div>
+                    <div class="avatar-sm rounded-circle bg-soft-primary text-primary d-flex align-items-center justify-content-center me-3 small fw-bold">
+                        {{ student.fullName?.charAt(0) }}
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold small">{{ student.fullName }}</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">{{ student.email }}</div>
+                    </div>
+                    <div *ngIf="student.classRoomName" class="badge bg-light text-dark border small fw-normal">
+                        {{ student.classRoomName }}
+                    </div>
+                </div>
+            </div>
+            
+            <div *ngIf="filteredStudents.length === 0" class="p-5 text-center text-muted">
+                <i class="fas fa-user-slash fs-2 mb-3 d-block opacity-25"></i>
+                لم يتم العثور على طلاب مطابقين
+            </div>
+        </div>
+
+        <div class="modal-footer border-top p-3 bg-light rounded-bottom-4">
+            <div class="me-auto text-secondary small">
+                تم اختيار <strong>{{ selectedStudentIds.length }}</strong> طالب
+            </div>
+            <button class="btn btn-link text-secondary text-decoration-none px-4 me-2" (click)="showLinkModal = false">إلغاء</button>
+            <button class="btn btn-primary rounded-pill px-5" (click)="saveLinks()" [disabled]="submitting">
+                <span *ngIf="!submitting">حفظ التغييرات</span>
+                <span *ngIf="submitting" class="spinner-border spinner-border-sm"></span>
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,173 @@
+<!-- features/profile/profile.component.html -->
+<div class="profile-container" dir="rtl">
+  <!-- Profile Header -->
+  <div class="profile-header">
+    <div class="profile-cover">
+      <div class="profile-avatar">
+        <img [src]="imagePreview || user?.avatar || '/assets/images/default-avatar.png'" 
+             alt="Profile picture">
+        <label for="avatarUpload" class="avatar-upload">
+          <i class="fas fa-camera"></i>
+        </label>
+        <input type="file" id="avatarUpload" accept="image/*" 
+               (change)="onImageSelected($event)" hidden>
+      </div>
+      
+      <div class="profile-title">
+        <h1>{{ user?.fullName }}</h1>
+        <p>{{ user?.role === 'Admin' ? 'مدير النظام' : 
+                user?.role === 'Teacher' ? 'معلم' :
+                user?.role === 'Student' ? 'طالب' : 'ولي أمر' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Content -->
+  <div class="profile-content">
+    <!-- Personal Info Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <h3>المعلومات الشخصية</h3>
+        <button class="btn-text" (click)="isEditing = !isEditing">
+          <i class="fas" [ngClass]="isEditing ? 'fa-times' : 'fa-edit'"></i>
+          {{ isEditing ? 'إلغاء' : 'تعديل' }}
+        </button>
+      </div>
+
+      <div class="card-body">
+        <!-- View Mode -->
+        <div class="info-grid" *ngIf="!isEditing">
+          <div class="info-item">
+            <span class="info-label">الاسم الكامل</span>
+            <span class="info-value">{{ user?.fullName }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">البريد الإلكتروني</span>
+            <span class="info-value">{{ user?.email }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">رقم الهاتف</span>
+            <span class="info-value">{{ user?.phone || 'غير محدد' }}</span>
+          </div>
+          <div class="info-item full-width">
+            <span class="info-label">العنوان</span>
+            <span class="info-value">{{ user?.address || 'غير محدد' }}</span>
+          </div>
+        </div>
+
+        <!-- Edit Mode -->
+        <form [formGroup]="editForm" *ngIf="isEditing" (ngSubmit)="saveProfile()">
+          <div class="form-group">
+            <label>الاسم الكامل</label>
+            <input type="text" formControlName="fullName" class="form-control">
+          </div>
+          
+          <div class="form-group">
+            <label>البريد الإلكتروني</label>
+            <input type="email" formControlName="email" class="form-control">
+          </div>
+          
+          <div class="form-group">
+            <label>رقم الهاتف</label>
+            <input type="tel" formControlName="phone" class="form-control">
+          </div>
+          
+          <div class="form-group">
+            <label>العنوان</label>
+            <textarea formControlName="address" class="form-control" rows="2"></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">
+              <i class="fas fa-save"></i>
+              حفظ التغييرات
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Security Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <h3>الأمان وكلمة المرور</h3>
+        <button class="btn-text" (click)="showPasswordForm = !showPasswordForm">
+          <i class="fas" [ngClass]="showPasswordForm ? 'fa-times' : 'fa-key'"></i>
+          {{ showPasswordForm ? 'إلغاء' : 'تغيير كلمة المرور' }}
+        </button>
+      </div>
+
+      <div class="card-body">
+        <!-- Password Form -->
+        <form [formGroup]="passwordForm" *ngIf="showPasswordForm" (ngSubmit)="changePassword()">
+          <div class="form-group">
+            <label>كلمة المرور الحالية</label>
+            <input type="password" formControlName="currentPassword" class="form-control">
+          </div>
+          
+          <div class="form-group">
+            <label>كلمة المرور الجديدة</label>
+            <input type="password" formControlName="newPassword" class="form-control">
+            <div class="error-message" *ngIf="passwordForm.get('newPassword')?.hasError('minlength')">
+              كلمة المرور يجب أن تكون 6 أحرف على الأقل
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>تأكيد كلمة المرور الجديدة</label>
+            <input type="password" formControlName="confirmPassword" class="form-control">
+            <div class="error-message" *ngIf="passwordForm.hasError('mismatch')">
+              كلمتا المرور غير متطابقتين
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">
+              <i class="fas fa-key"></i>
+              تغيير كلمة المرور
+            </button>
+          </div>
+        </form>
+
+        <!-- Password Info -->
+        <div class="password-info" *ngIf="!showPasswordForm">
+          <div class="info-row">
+            <i class="fas fa-check-circle text-success"></i>
+            <span>آخر تغيير: 15 يناير 2024</span>
+          </div>
+          <div class="info-row">
+            <i class="fas fa-shield-alt text-primary"></i>
+            <span>مستوى الأمان: قوي</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Statistics -->
+    <div class="info-card" *ngIf="user?.role === 'Student'">
+      <div class="card-header">
+        <h3>إحصائيات الحساب</h3>
+      </div>
+      <div class="card-body">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-label">تاريخ التسجيل</span>
+            <span class="stat-value">{{ user?.createdAt | date }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">آخر دخول</span>
+            <span class="stat-value">{{ user?.lastLogin | date:'short' }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">عدد الجلسات</span>
+            <span class="stat-value">{{ user?.sessionCount }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">الجهاز الحالي</span>
+            <span class="stat-value">{{ currentDevice }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

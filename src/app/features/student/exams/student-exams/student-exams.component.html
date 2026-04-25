@@ -1,0 +1,118 @@
+<div class="student-exams-container min-vh-100">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="mb-0 fw-bold ms-auto">الامتحانات</h3>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-tabs border-bottom border-darker mb-4 gap-3 border-0">
+        <li class="nav-item">
+            <button class="nav-link fw-bold border-0 text-secondary px-4 py-2"
+                [class.active-tab]="activeTab === 'ongoing'" (click)="setTab('ongoing')">
+                الجارية
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link fw-bold border-0 text-secondary px-4 py-2"
+                [class.active-tab]="activeTab === 'upcoming'" (click)="setTab('upcoming')">
+                القادمة
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link fw-bold border-0 text-secondary px-4 py-2"
+                [class.active-tab]="activeTab === 'completed'" (click)="setTab('completed')">
+                المكتملة
+            </button>
+        </li>
+    </ul>
+
+    <!-- Loading List -->
+    <div class="text-center py-5" *ngIf="loading">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+
+    <!-- Error / Empty State -->
+    <div *ngIf="!loading">
+        <div class="alert alert-info text-center" *ngIf="(activeTab === 'ongoing' && ongoingExams.length === 0) || 
+                (activeTab === 'upcoming' && upcomingExams.length === 0) || 
+                (activeTab === 'completed' && completedExams.length === 0)">
+            لا توجد امتحانات في هذه الفئة حالياً.
+        </div>
+
+        <!-- Exam Cards -->
+        <div class="row g-4 d-flex justify-content-end text-end" dir="rtl">
+            <ng-container *ngIf="activeTab === 'ongoing'">
+                <div class="col-12 col-md-6 col-lg-5" *ngFor="let exam of ongoingExams">
+                    <div class="card h-100 bg-card border-theme shadow-sm exam-card rounded-4 p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="badge bg-success bg-opacity-25 text-success rounded-pill px-3 py-2">متاح
+                                الآن</span>
+                            <div class="icon-circle bg-success text-inverse rounded-3 p-2">
+                                <i class="far fa-file-alt"></i>
+                            </div>
+                        </div>
+
+                        <h5 class="fw-bold mb-1">{{ exam.title }}</h5>
+                        <p class="text-secondary small mb-4">{{ exam.subjectName || exam.subject || 'غير محدد' }}</p>
+
+                        <div class="d-flex flex-column gap-2 mb-4">
+                            <div class="d-flex align-items-center text-secondary small gap-2">
+                                <i class="far fa-clock text-secondary"></i>
+                                <span>{{ exam.duration || 45 }} دقيقة</span>
+                            </div>
+                            <div class="d-flex align-items-center text-secondary small gap-2">
+                                <i class="far fa-question-circle text-secondary"></i>
+                                <span>{{ exam.questions?.length || exam.totalMarks || 10 }} سؤال</span>
+                            </div>
+                        </div>
+
+                        <button [routerLink]="['/student/exams/take', exam.id]"
+                            class="btn btn-primary w-100 rounded-3 py-2 fw-bold shadow">
+                            ابدأ الامتحان
+                        </button>
+                    </div>
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="activeTab === 'upcoming'">
+                <div class="col-12 col-md-6 col-lg-5" *ngFor="let exam of upcomingExams">
+                    <!-- Similar layout with different status badge / button state -->
+                    <div class="card h-100 bg-card border-theme shadow-sm exam-card rounded-4 p-4 opacity-75">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="badge bg-warning bg-opacity-25 text-warning rounded-pill px-3 py-2">يبدأ
+                                قريباً</span>
+                            <div class="icon-circle bg-darker text-secondary rounded-3 p-2">
+                                <i class="far fa-file-alt"></i>
+                            </div>
+                        </div>
+                        <h5 class="fw-bold mb-1">{{ exam.title }}</h5>
+                        <p class="text-secondary small mb-4">{{ exam.subjectName || exam.subject }} - يبدأ في: {{
+                            exam.startTime | date:'shortTime' }}</p>
+
+                        <button class="btn btn-outline-secondary w-100 rounded-3 py-2 fw-bold" disabled>
+                            غير متاح بعد
+                        </button>
+                    </div>
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="activeTab === 'completed'">
+                <div class="col-12 col-md-6 col-lg-5" *ngFor="let exam of completedExams">
+                    <!-- Layout for completed -->
+                    <div class="card h-100 bg-card border-theme shadow-sm exam-card rounded-4 p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span
+                                class="badge bg-secondary bg-opacity-25 text-secondary rounded-pill px-3 py-2">انتهى</span>
+                        </div>
+                        <h5 class="fw-bold mb-1">{{ exam.title }}</h5>
+                        <p class="text-secondary small mb-4">{{ exam.subjectName || exam.subject }}</p>
+
+                        <button [routerLink]="['/student/exams/result', exam.id]" class="btn btn-dark-gray w-100 rounded-3 py-2 fw-bold">
+                            عرض النتيجة
+                        </button>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>

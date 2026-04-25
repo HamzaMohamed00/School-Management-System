@@ -1,0 +1,65 @@
+<div class="result-container" dir="rtl">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a routerLink="/student/exams" class="text-muted text-decoration-none d-inline-flex align-items-center mb-2">
+                <i class="fas fa-arrow-right ms-2"></i> العودة للاختبارات
+            </a>
+            <h2 class="page-title mb-1">نتيجة الاختبار</h2>
+        </div>
+    </div>
+
+    <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+
+    <div class="card result-card border-0 shadow-sm" *ngIf="!loading && resultData">
+        <div class="card-body text-center p-5">
+            <div class="status-icon mb-4" [ngClass]="percentage >= 50 ? 'passed' : 'failed'">
+                <i class="fas" [ngClass]="percentage >= 50 ? 'fa-trophy' : 'fa-times-circle'"></i>
+            </div>
+            
+            <h3 class="exam-title mb-2">{{ resultData.examTitle }}</h3>
+            <p class="status-msg mb-4" [ngClass]="percentage >= 50 ? 'text-success' : 'text-danger'">
+                {{ statusMessage }}
+            </p>
+
+            <div class="score-grid row g-3 mb-4">
+                <div class="col-6 col-md-3">
+                    <div class="score-item">
+                        <span class="label">درجتك</span>
+                        <span class="value">{{ resultData.score }}</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="score-item">
+                        <span class="label">الدرجة النهائية</span>
+                        <span class="value">{{ resultData.maxScore }}</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="score-item">
+                        <span class="label">النسبة</span>
+                        <span class="value">{{ percentage }}%</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="score-item">
+                        <span class="label">الحالة</span>
+                        <span class="value" [ngClass]="percentage >= 50 ? 'text-success' : 'text-danger'">
+                            {{ percentage >= 50 ? 'ناجح' : 'راسب' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="notes-box p-3 bg-light rounded text-end" *ngIf="resultData.notes">
+                <h6 class="fw-bold mb-2"><i class="fas fa-comment ms-2"></i>ملاحظات:</h6>
+                <p class="mb-0 text-secondary">{{ resultData.notes }}</p>
+            </div>
+
+            <div class="mt-5">
+                <button routerLink="/student/exams" class="btn btn-primary px-5 py-2 rounded-pill fw-bold">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>

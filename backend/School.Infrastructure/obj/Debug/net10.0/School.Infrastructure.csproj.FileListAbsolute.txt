@@ -1,0 +1,57 @@
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Infrastructure.deps.json
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Infrastructure.runtimeconfig.json
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Infrastructure.dll
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Infrastructure.pdb
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Application.dll
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Domain.dll
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Application.pdb
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Domain.pdb
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.csproj.AssemblyReference.cache
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.AssemblyInfoInputs.cache
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.AssemblyInfo.cs
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.csproj.CoreCompileInputs.cache
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.I.43F417B3.Up2Date
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.dll
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\refint\School.Infrastructure.dll
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.pdb
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.genruntimeconfig.cache
+c:\Users\MOHAMMED\Desktop\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\ref\School.Infrastructure.dll
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Infrastructure.deps.json
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Infrastructure.runtimeconfig.json
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Infrastructure.dll
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Infrastructure.pdb
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Application.dll
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Domain.dll
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Application.pdb
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Domain.pdb
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.AssemblyInfo.cs
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.I.43F417B3.Up2Date
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.dll
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\refint\School.Infrastructure.dll
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.pdb
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.genruntimeconfig.cache
+C:\Users\hamza\Downloads\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\ref\School.Infrastructure.dll
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Infrastructure.deps.json
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Infrastructure.runtimeconfig.json
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Infrastructure.dll
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Infrastructure.pdb
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Application.dll
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Domain.dll
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Application.pdb
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\bin\Debug\net10.0\School.Domain.pdb
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.csproj.AssemblyReference.cache
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.AssemblyInfoInputs.cache
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.AssemblyInfo.cs
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.csproj.CoreCompileInputs.cache
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.I.43F417B3.Up2Date
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.dll
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\refint\School.Infrastructure.dll
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.pdb
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\School.Infrastructure.genruntimeconfig.cache
+D:\PC\College\Graduation Project\New folder\school-frontend-structure\school-frontend-structure\backend\School.Infrastructure\obj\Debug\net10.0\ref\School.Infrastructure.dll

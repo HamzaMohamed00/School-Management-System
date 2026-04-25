@@ -1,0 +1,108 @@
+<!-- features/teacher/dashboard/teacher-dashboard.component.html -->
+<div class="teacher-dashboard" dir="rtl">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <h1>مرحباً، أستاذ {{ teacherName }}</h1>
+    <p class="date">{{ today | date:'EEEE, d MMMM yyyy' }}</p>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-content">
+        <h3>الحصص اليوم</h3>
+        <p class="stat-value">2</p>
+        <p class="stat-label">متوسط الحضور 95%</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-chalkboard-teacher"></i>
+      </div>
+      <div class="stat-content">
+        <h3>الحصة الحالية</h3>
+        <p class="stat-value">الرياضيات - الجبر</p>
+        <p class="stat-label">28/30 طالب</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="stat-content">
+        <h3>الحصة القادمة</h3>
+        <p class="stat-value">العلوم</p>
+        <p class="stat-label">بعد 30 دقيقة</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <h2>إجراءات سريعة</h2>
+    <div class="actions-grid">
+      <button class="action-btn" [routerLink]="['/teacher/attendance/qr']">
+        <i class="fas fa-qrcode"></i>
+        <span>بدء حضور بـ QR</span>
+      </button>
+      <button class="action-btn" [routerLink]="['/teacher/attendance/face']">
+        <i class="fas fa-camera"></i>
+        <span>بدء حضور بـ Face ID</span>
+      </button>
+      <button class="action-btn" [routerLink]="['/teacher/exams/create']">
+        <i class="fas fa-pen"></i>
+        <span>إنشاء اختبار</span>
+      </button>
+      <button class="action-btn" [routerLink]="['/teacher/grades']">
+        <i class="fas fa-star"></i>
+        <span>إدخال درجات</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Recent Activity & Messages -->
+  <div class="dashboard-grid">
+    <!-- Recent Attendance -->
+    <div class="card recent-attendance">
+      <div class="card-header">
+        <h3>آخر الحضور</h3>
+        <a href="#" [routerLink]="['/teacher/attendance']">عرض الكل</a>
+      </div>
+      <div class="card-body">
+        <div class="attendance-item" *ngFor="let att of recentAttendance">
+          <img [src]="att.studentAvatar" alt="">
+          <div class="item-info">
+            <h4>{{ att.studentName }}</h4>
+            <p>{{ att.time | date:'shortTime' }}</p>
+          </div>
+          <span class="badge" [class.success]="att.status === 'present'">
+            {{ att.status === 'present' ? 'حاضر' : 'غائب' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Messages -->
+    <div class="card recent-messages">
+      <div class="card-header">
+        <h3>آخر الرسائل</h3>
+        <a href="#" [routerLink]="['/chat']">فتح المحادثات</a>
+      </div>
+      <div class="card-body">
+        <div class="message-item" *ngFor="let msg of recentMessages">
+          <img [src]="msg.senderAvatar" alt="">
+          <div class="item-info">
+            <h4>{{ msg.senderName }}</h4>
+            <p>{{ msg.preview }}</p>
+          </div>
+          <span class="time">{{ msg.time | date:'shortTime' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

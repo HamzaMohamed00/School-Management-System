@@ -1,0 +1,122 @@
+<!-- features/admin/students/student-list/student-list.component.html -->
+<div class="student-management" dir="rtl">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>إدارة الطلاب</h1>
+    <button class="btn-primary" (click)="onAddStudent()">
+      <i class="fas fa-plus"></i>
+      إضافة طالب جديد
+    </button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon blue">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-content">
+        <h3>إجمالي الطلاب</h3>
+        <p class="stat-value">156</p>
+        <p class="stat-label">+12 هذا الشهر</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon green">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="stat-content">
+        <h3>نشط</h3>
+        <p class="stat-value">142</p>
+        <p class="stat-label">91% من الإجمالي</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon yellow">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="stat-content">
+        <h3>متوسط الحضور</h3>
+        <p class="stat-value">95%</p>
+        <p class="stat-label">هذا الأسبوع</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon purple">
+        <i class="fas fa-credit-card"></i>
+      </div>
+      <div class="stat-content">
+        <h3>باقي سداد</h3>
+        <p class="stat-value">14</p>
+        <p class="stat-label">طالب</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label>الفصل:</label>
+      <select class="form-control">
+        <option value="">كل الفصول</option>
+        <option *ngFor="let class of classes" [value]="class.id">
+          {{ class.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>الحالة:</label>
+      <select class="form-control">
+        <option value="">الكل</option>
+        <option value="active">نشط</option>
+        <option value="inactive">غير نشط</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>تدريب الوجه:</label>
+      <select class="form-control">
+        <option value="">الكل</option>
+        <option value="trained">مدرب</option>
+        <option value="untrained">غير مدرب</option>
+      </select>
+    </div>
+
+    <button class="btn-secondary" (click)="applyFilters()">
+      <i class="fas fa-filter"></i>
+      تطبيق الفلترة
+    </button>
+  </div>
+
+  <!-- Students Table -->
+  <app-smart-table
+    [data]="students"
+    [columns]="columns"
+    [totalItems]="totalItems"
+    [pageSize]="pageSize"
+    [currentPage]="currentPage"
+    [loading]="loading"
+    (pageChange)="onPageChange($event)"
+    (search)="onSearch($event)"
+    (sort)="onSort($event)"
+    (edit)="onEditStudent($event)"
+    (delete)="onDeleteStudent($event)"
+    (view)="onViewStudent($event)">
+    
+    <!-- Custom Template for Attendance Rate -->
+    <ng-template #attendanceRateTemplate let-student>
+      <span class="badge" [ngClass]="{
+        'success': student.attendanceRate >= 90,
+        'warning': student.attendanceRate >= 75 && student.attendanceRate < 90,
+        'danger': student.attendanceRate < 75
+      }">
+        {{ student.attendanceRate }}%
+      </span>
+    </ng-template>
+    
+  </app-smart-table>
+</div>

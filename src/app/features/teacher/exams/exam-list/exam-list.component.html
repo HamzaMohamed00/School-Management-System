@@ -1,0 +1,164 @@
+<div class="page-container" dir="rtl">
+
+  <!-- Header -->
+  <div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="page-title mb-1">
+        <i class="fas fa-file-alt text-primary me-2"></i> الاختبارات
+      </h2>
+      <p class="text-muted mb-0">إدارة واستعراض اختبارات طلابك</p>
+    </div>
+    <button class="btn btn-premium px-4 py-2 rounded-pill fw-bold d-flex align-items-center gap-2"
+      (click)="onCreateExam()">
+      <i class="fas fa-plus"></i>
+      إضافة اختبار جديد
+    </button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="stat-card stat-total">
+        <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
+        <div class="stat-info">
+          <span class="stat-value">{{ totalExams }}</span>
+          <span class="stat-label">إجمالي الاختبارات</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card stat-upcoming">
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+        <div class="stat-info">
+          <span class="stat-value">{{ upcomingCount }}</span>
+          <span class="stat-label">اختبارات قادمة</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card stat-active">
+        <div class="stat-icon"><i class="fas fa-circle-dot"></i></div>
+        <div class="stat-info">
+          <span class="stat-value">{{ activeCount }}</span>
+          <span class="stat-label">جارية الآن</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card stat-past">
+        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-info">
+          <span class="stat-value">{{ pastCount }}</span>
+          <span class="stat-label">اختبارات منتهية</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & Filters -->
+  <div class="filter-card mb-4">
+    <div class="row g-2 align-items-center">
+      <div class="col-md-5">
+        <div class="search-box position-relative">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" class="form-control search-input" placeholder="ابحث في الاختبارات..."
+            [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()">
+        </div>
+      </div>
+      <div class="col-md-3">
+        <select class="form-select filter-select" [(ngModel)]="selectedStatus" (change)="applyFilters()">
+          <option value="all">كل الحالات</option>
+          <option value="upcoming">قادم</option>
+          <option value="active">جاري</option>
+          <option value="past">منتهي</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select class="form-select filter-select" [(ngModel)]="selectedClass" (change)="applyFilters()">
+          <option value="all">كل الفصول</option>
+          <option *ngFor="let cls of classes" [value]="cls.id">{{ cls.name }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status" style="width:3rem;height:3rem;"></div>
+    <p class="text-muted mt-3 fw-bold">جاري تحميل الاختبارات...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && filteredExams.length === 0" class="empty-state text-center py-5">
+    <div class="empty-icon mx-auto mb-4">
+      <i class="fas fa-file-alt"></i>
+    </div>
+    <h5 class="fw-bold mb-2">لا توجد اختبارات</h5>
+    <p class="text-muted mb-4">لم يتم العثور على أي اختبارات مطابقة للبحث الحالي</p>
+    <button class="btn btn-premium px-4 rounded-pill" (click)="onCreateExam()">
+      <i class="fas fa-plus me-2"></i> إنشاء اختبار جديد
+    </button>
+  </div>
+
+  <!-- Exams Grid -->
+  <div *ngIf="!loading && filteredExams.length > 0" class="exams-grid">
+    <div class="exam-card" *ngFor="let exam of filteredExams">
+      <div class="exam-card-header">
+        <div class="exam-title-wrap">
+          <h5 class="exam-title">{{ exam.title }}</h5>
+          <span class="subject-badge">{{ exam.subject?.name || 'غير محدد' }}</span>
+        </div>
+        <span class="status-badge {{ getStatusBadge(exam).cls }}">
+          <i class="{{ getStatusBadge(exam).icon }} me-1"></i>
+          {{ getStatusBadge(exam).text }}
+        </span>
+      </div>
+
+      <div class="exam-card-body">
+        <div class="exam-meta-grid">
+          <div class="meta-item">
+            <i class="fas fa-school text-primary"></i>
+            <span>{{ exam.classRoom?.name || 'غير محدد' }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-calendar-alt text-warning"></i>
+            <span>{{ formatDate(exam.startTime) }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-clock text-success"></i>
+            <span>من {{ formatTime(exam.startTime) }} إلى {{ formatTime(exam.endTime) }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-hourglass-half text-info"></i>
+            <span>{{ getDurationInfo(exam) }} دقيقة</span>
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-star text-danger"></i>
+            <span>{{ exam.maxScore }} درجة</span>
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-award text-secondary"></i>
+            <span>النجاح: {{ exam.passingMarks || (exam.maxScore / 2) }} درجة</span>
+          </div>
+        </div>
+
+        <div *ngIf="exam.description" class="exam-description">
+          <p class="text-muted small mb-0">{{ exam.description }}</p>
+        </div>
+      </div>
+
+      <div class="exam-card-footer">
+        <button class="action-btn btn-results" (click)="onViewResults(exam)" title="النتائج">
+          <i class="fas fa-chart-bar me-1"></i> النتائج
+        </button>
+        <button class="action-btn btn-edit" (click)="onEditExam(exam)" title="تعديل">
+          <i class="fas fa-edit me-1"></i> تعديل
+        </button>
+        <button class="action-btn btn-delete" (click)="onDeleteExam(exam)" title="حذف">
+          <i class="fas fa-trash-alt me-1"></i> حذف
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

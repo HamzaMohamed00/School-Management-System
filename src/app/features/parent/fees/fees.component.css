@@ -1,0 +1,130 @@
+.fees-container {
+    padding: 2rem;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 90vh;
+    border-radius: 2rem;
+    color: #f8fafc;
+}
+
+.shadow-premium {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1) !important;
+}
+
+.bg-warning-soft {
+    background-color: rgba(245, 158, 11, 0.1) !important;
+}
+
+.bg-success-soft {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+}
+
+.action-card:hover {
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.summary-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #f8fafc;
+}
+
+.summary-card .bg-light {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.table {
+    color: #94a3b8;
+}
+
+.table thead th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #1e293b;
+    color: #64748b;
+}
+
+.table tbody tr {
+    border-bottom: 1px solid #1e293b;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+    color: #f8fafc;
+}
+
+/* Payment Card Simulation */
+.payment-card-visual {
+    background: linear-gradient(45deg, #4f46e5, #9333ea);
+    position: relative;
+    overflow: hidden;
+}
+
+.payment-card-visual::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(45deg);
+}
+
+/* Success Overlay */
+.success-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.95);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.success-card {
+    max-width: 500px;
+    width: 90%;
+    border: 0;
+    color: #1e293b;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fees-container > * {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+/* Modal specific */
+.modal.show {
+    display: block;
+    backdrop-filter: blur(8px);
+}
+
+.modal-content {
+    background: #ffffff;
+    color: #1e293b;
+}
+
+.form-check-input {
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+}
+
+.form-check-input:checked {
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+}

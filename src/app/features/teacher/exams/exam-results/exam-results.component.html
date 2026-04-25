@@ -1,0 +1,114 @@
+<div class="page-container" dir="rtl">
+
+  <!-- Header -->
+  <div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <a routerLink="/teacher/exams" class="text-muted text-decoration-none d-inline-flex align-items-center mb-2">
+        <i class="fas fa-arrow-right ms-2"></i> العودة للاختبارات
+      </a>
+      <h2 class="page-title mb-1">
+        <i class="fas fa-chart-bar text-primary me-2"></i> نتائج اختبار: <span class="text-primary">{{ examTitle }}</span>
+      </h2>
+      <p class="text-muted mb-0">استعرض أداء الطلاب ودرجاتهم بوضوح</p>
+    </div>
+    <button class="btn btn-premium px-4 py-2 rounded-pill fw-bold d-flex align-items-center gap-2" (click)="exportResults()">
+      <i class="fas fa-download"></i> تصدير إكسيل
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status" style="width:3rem;height:3rem;"></div>
+    <p class="text-muted mt-3 fw-bold">جاري تحميل النتائج...</p>
+  </div>
+
+  <ng-container *ngIf="!loading">
+      
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <div class="stat-card">
+          <div class="stat-icon bg-light-primary text-primary"><i class="fas fa-users"></i></div>
+          <div class="stat-info">
+            <span class="stat-value">{{ totalStudents }}</span>
+            <span class="stat-label">طالب أدوا الاختبار</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card">
+          <div class="stat-icon bg-light-warning text-warning"><i class="fas fa-star-half-alt"></i></div>
+          <div class="stat-info">
+            <span class="stat-value">{{ averageScore }} <small class="text-muted fs-6">/ {{ maxScore }}</small></span>
+            <span class="stat-label">متوسط درجات الطلاب</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card">
+          <div class="stat-icon bg-light-success text-success"><i class="fas fa-chart-pie"></i></div>
+          <div class="stat-info">
+            <span class="stat-value">{{ passRate }}%</span>
+            <span class="stat-label">نسبة النجاح</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Table -->
+    <div class="card premium-card border-0 shadow-sm">
+      <div class="card-body p-0">
+        
+        <div class="table-responsive">
+          <table class="table align-middle mb-0 custom-table">
+            <thead>
+              <tr>
+                <th style="width: 50px;">#</th>
+                <th>اسم الطالب</th>
+                <th>الدرجة</th>
+                <th>النسبة</th>
+                <th>ملاحظات</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="results.length === 0">
+                <td colspan="5" class="text-center py-5 text-muted">
+                  <i class="fas fa-inbox fs-1 mb-3 text-light"></i>
+                  <p class="mb-0">لا يوجد متقدمين لهذا الاختبار حتى الآن.</p>
+                </td>
+              </tr>
+              <tr *ngFor="let res of results; let i = index">
+                <td class="text-muted fw-bold">{{ i + 1 }}</td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="avatar-sm bg-light-primary text-primary rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="fas fa-user"></i>
+                    </div>
+                    <span class="fw-bold">{{ res.studentName }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="score-badge fw-bold" [ngClass]="{'text-success': res.score >= maxScore/2, 'text-danger': res.score < maxScore/2}">
+                    {{ res.score }} / {{ maxScore }}
+                  </span>
+                </td>
+                <td>
+                  <div class="progress" style="height: 6px; width: 80px;">
+                    <div class="progress-bar" role="progressbar" 
+                         [ngClass]="res.score >= maxScore/2 ? 'bg-success' : 'bg-danger'"
+                         [style.width.%]="(res.score / maxScore) * 100">
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="text-muted small">{{ res.notes || '—' }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>

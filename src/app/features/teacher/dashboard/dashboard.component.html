@@ -1,0 +1,215 @@
+<div class="page-container">
+    <!-- Page Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="page-title mb-1">مرحباً أستاذ <span class="gradient-text">{{ teacherName }}</span> 👋</h2>
+            <p class="text-muted mb-0 fs-5 mt-2">إليك ملخص نشاطك العام ومتابعة الحصص</p>
+        </div>
+        <a routerLink="/teacher/timetable"
+            class="btn btn-premium px-4 py-2 rounded-pill fw-bold d-flex align-items-center gap-2">
+            <i class="fas fa-calendar-alt"></i>
+            عرض الجدول الكامل
+        </a>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <!-- Total Students -->
+        <div class="col-md-4">
+            <div class="premium-card stat-card">
+                <div class="stat-icon-wrapper bg-gradient-primary">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="text-end flex-grow-1 ms-3">
+                    <p class="text-muted mb-1 fs-6">إجمالي الطلاب</p>
+                    <h2 class="fw-bold mb-0 text-white">{{ stats.totalStudents || 0 }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Average Attendance -->
+        <div class="col-md-4">
+            <div class="premium-card stat-card">
+                <div class="stat-icon-wrapper bg-gradient-success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="text-end flex-grow-1 ms-3">
+                    <p class="text-muted mb-1 fs-6">متوسط الحضور</p>
+                    <h2 class="fw-bold mb-0 text-white">{{ stats.attendanceAvg }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's Classes -->
+        <div class="col-md-4">
+            <div class="premium-card stat-card">
+                <div class="stat-icon-wrapper bg-gradient-warning">
+                    <i class="far fa-clock"></i>
+                </div>
+                <div class="text-end flex-grow-1 ms-3">
+                    <p class="text-muted mb-1 fs-6">حصص اليوم</p>
+                    <h2 class="fw-bold mb-0 text-white">{{ stats.todayClasses }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current and Upcoming Classes -->
+    <div class="row g-4">
+        <!-- Current Class -->
+        <div class="col-lg-7">
+            <div class="premium-card current-class-card h-100">
+                <div class="card-header-glass pt-4 pb-3 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-chalkboard-teacher me-2 text-primary"></i> الحصة الحالية</h5>
+                    <span class="badge badge-live rounded-pill px-3 py-2" *ngIf="currentSession">
+                        <i class="fas fa-circle fs-xs me-1 blink"></i> جاري الآن
+                    </span>
+                </div>
+                
+                <div class="card-body px-4 pb-4 mt-3">
+                    <div class="current-class-content" *ngIf="currentSession">
+                        <!-- Subject -->
+                        <h3 class="fw-bold mb-2">{{ currentSession.subjectName }}</h3>
+                        <p class="text-muted fs-5 mb-4"><i class="fas fa-door-open me-2"></i> {{ currentSession.classRoomName }}</p>
+                        
+                        <!-- Details -->
+                        <div class="d-flex flex-wrap gap-4 mb-4 p-3 rounded-4" style="background: rgba(0,0,0,0.1)">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="bg-primary bg-opacity-10 p-2 rounded-circle text-primary">
+                                    <i class="far fa-clock"></i>
+                                </div>
+                                <span class="fw-medium">{{ currentSession.startTime | date:'shortTime' }} - {{ currentSession.endTime | date:'shortTime' }}</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="bg-success bg-opacity-10 p-2 rounded-circle text-success">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <span class="fw-medium">{{ currentSession.attendanceCount || 0 }} طالب حاضر</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="d-flex flex-column flex-sm-row gap-3">
+                            <a [routerLink]="['/teacher/attendance']" [queryParams]="{sessionId: currentSession.id}"
+                                class="btn btn-premium flex-grow-1 py-2 rounded-pill fw-bold">
+                                <i class="fas fa-clipboard-check me-2"></i> رصد الحضور
+                            </a>
+                            <button (click)="openQR()" class="btn btn-glass flex-grow-1 py-2 rounded-pill fw-bold">
+                                <i class="fas fa-qrcode me-2"></i> QR تفاعلي
+                            </button>
+                            <a [routerLink]="['/live', currentSession.id]"
+                                class="btn btn-premium-danger flex-grow-1 py-2 rounded-pill fw-bold">
+                                <i class="fas fa-video me-2"></i> البث المباشر
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="empty-state" *ngIf="!currentSession && !loading">
+                        <div class="empty-icon"><i class="fas fa-coffee"></i></div>
+                        <h5 class="fw-bold mb-2">وقت الراحة!</h5>
+                        <p class="text-muted mb-4">لا توجد حصص جارية حالياً وفقاً لجدولك الدراسي.</p>
+                        <button (click)="startManualAttendance()" class="btn btn-premium px-4 py-2 rounded-pill fw-bold">
+                            <i class="fas fa-plus-circle me-2"></i>
+                            بدء حصة استثنائية (إضافية)
+                        </button>
+                    </div>
+                    
+                    <div class="py-5 text-center" *ngIf="loading">
+                        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+                        <p class="text-muted mt-3">جاري تحميل البيانات...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- QR Modal Overlay -->
+            <div class="qr-modal-overlay" *ngIf="showQRModal" (click)="closeQR()">
+                <div class="qr-modal-content" (click)="$event.stopPropagation()">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold mb-0">كود الحضور الذكي</h5>
+                        <button class="btn-close btn-close-white" (click)="closeQR()"></button>
+                    </div>
+                    <div class="qr-container text-center mb-3">
+                        <qrcode [qrdata]="qrData" [width]="240" [errorCorrectionLevel]="'M'" colorDark="#000000" colorLight="#ffffff"></qrcode>
+                    </div>
+                    <div class="progress bg-dark mb-2" style="height: 6px; border-radius: 3px;">
+                        <div class="progress-bar bg-primary" role="progressbar" 
+                             [style.width.%]="100" 
+                             style="transition: width 5s linear;"></div>
+                    </div>
+                    <p class="text-center text-muted small mb-0">يتغير الكود تلقائياً لضمان مصداقية الحضور</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Classes -->
+        <div class="col-lg-5">
+            <div class="premium-card h-100">
+                <div class="card-header-glass pt-4 pb-3 px-4">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-hourglass-half me-2 text-warning"></i> الحصص القادمة اليوم</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush" *ngIf="upcomingSessions.length > 0">
+                        <div class="list-group-item glass-list-item px-4 py-3" *ngFor="let s of upcomingSessions">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="bg-dark p-2 rounded-circle text-muted" style="width: 40px; height: 40px; display: flex; align-items:center; justify-content:center;">
+                                        <i class="fas fa-book-open"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold text-white mb-1">{{ s.subjectName }}</h6>
+                                        <small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i> {{ s.classRoomName }}</small>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold text-primary">{{ s.startTime | date:'shortTime' }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="empty-state py-5" *ngIf="upcomingSessions.length === 0 && !loading">
+                        <div class="empty-icon text-success"><i class="far fa-smile-beam"></i></div>
+                        <h6 class="fw-bold text-white mb-1">تم إنجاز العمل!</h6>
+                        <p class="text-muted mb-0 fs-6">لا توجد حصص أخرى لليوم.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Announcements Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="premium-card">
+                <div class="card-header-glass pt-4 pb-3 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-bullhorn me-2 text-info"></i> الإعلانات والتنبيهات</h5>
+                    <a routerLink="/chat" class="badge bg-primary bg-opacity-25 text-primary rounded-pill px-3 py-2 text-decoration-none transition-all hover-scale">
+                        الذهاب لمركز التواصل <i class="fas fa-arrow-left ms-1"></i>
+                    </a>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-4" *ngFor="let announcement of announcements">
+                            <div class="announcement-box">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="badge bg-warning text-dark fw-bold rounded-pill px-2 py-1"><i class="fas fa-star fs-xs me-1"></i> إعلان هام</span>
+                                    <small class="text-muted"><i class="far fa-clock me-1"></i> {{ announcement.createdAt | date:'shortDate' }}</small>
+                                </div>
+                                <h6 class="fw-bold text-white mb-2">{{ announcement.title }}</h6>
+                                <p class="text-muted small mb-0 lh-lg line-clamp-3">
+                                    {{ announcement.content }}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 empty-state py-4" *ngIf="announcements.length === 0">
+                            <div class="empty-icon mx-auto"><i class="fas fa-bell-slash"></i></div>
+                            <h6 class="text-white fw-bold mb-1">صندوق الإعلانات فارغ</h6>
+                            <p class="text-muted mb-0">لا توجد إعلانات أو تعميمات جديدة من الإدارة حالياً.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,103 @@
+<div class="page-container">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="page-title">إدارة المواد الدراسية</h2>
+            <p class="text-muted mb-0">إضافة وتعديل المناهج والمواد التعليمية</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary d-flex align-items-center gap-2" (click)="openAddModal()">
+                <i class="fas fa-plus"></i>
+                <span>إضافة مادة جديدة</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="grid-container row g-4">
+        <div class="col-md-6 col-lg-4" *ngFor="let sub of subjects">
+            <div class="card border-0 shadow-sm rounded-4 subject-card h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold text-dark mb-1">{{ sub.name }} <small class="text-muted">(#{{ sub.id }})</small></h5>
+                    <p class="text-muted small mb-3">كود المادة: <span class="badge bg-light text-dark fw-bold">{{
+                            sub.code || 'N/A' }}</span></p>
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top pb-2">
+                        <span class="text-muted small"><i class="far fa-clock ms-1"></i>{{ sub.creditHours || 0 }} ساعات معتمدة</span>
+                        <span class="badge bg-info-subtle text-info px-3 py-2 rounded-pill fw-bold">نشط</span>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-2 pt-2 border-top">
+                        <ng-container *ngIf="confirmingDeleteId !== sub.id">
+                            <button class="btn btn-outline-primary flex-grow-1 py-2 rounded-3" (click)="$event.stopPropagation(); openEditModal(sub)">
+                                <i class="fas fa-edit me-1"></i> تعديل
+                            </button>
+                            <button class="btn btn-outline-danger flex-grow-1 py-2 rounded-3" (click)="deleteSubject($event, sub.id)">
+                                <i class="fas fa-trash-alt me-1"></i> حذف
+                            </button>
+                        </ng-container>
+
+                        <ng-container *ngIf="confirmingDeleteId === sub.id">
+                            <button class="btn btn-danger flex-grow-1 py-2 rounded-3" (click)="deleteSubject($event, sub.id)">
+                                <i class="fas fa-check me-1"></i> تأكيد الحذف
+                            </button>
+                            <button class="btn btn-light flex-grow-1 py-2 rounded-3" (click)="cancelDelete($event)">
+                                <i class="fas fa-times me-1"></i> إلغاء
+                            </button>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 text-center py-5" *ngIf="loading">
+            <div class="spinner-border text-primary"></div>
+        </div>
+
+        <div class="col-12 text-center py-5" *ngIf="!loading && subjects.length === 0">
+            <h6 class="text-muted">لم يتم إضافة أي مواد بعد</h6>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop fade show" *ngIf="showModal"></div>
+<div class="modal fade show d-block" *ngIf="showModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 p-4">
+                <h5 class="modal-title fw-bold">{{ isEditMode ? 'تعديل مادة' : 'إضافة مادة جديدة' }}</h5>
+                <button type="button" class="btn-close shadow-none" (click)="showModal = false"></button>
+            </div>
+            <form (ngSubmit)="saveSubject()">
+                <div class="modal-body p-4 pt-0">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">اسم المادة</label>
+                        <input type="text" class="form-control rounded-3" name="name" [(ngModel)]="currentSubject.name"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">وصف المادة</label>
+                        <textarea class="form-control rounded-3" name="description" [(ngModel)]="currentSubject.description" rows="2"></textarea>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">كود المادة</label>
+                            <input type="text" class="form-control rounded-3" name="code"
+                                [(ngModel)]="currentSubject.code">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">الساعات المعتمدة</label>
+                            <input type="number" class="form-control rounded-3" name="creditHours"
+                                [(ngModel)]="currentSubject.creditHours">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-3 px-4"
+                        (click)="showModal = false">إلغاء</button>
+                    <button type="submit" class="btn btn-primary rounded-3 px-4" [disabled]="submitting">حفظ
+                        المادة</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

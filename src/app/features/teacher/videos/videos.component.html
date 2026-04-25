@@ -1,0 +1,141 @@
+<div class="page-container" [class.blur-background]="showModal || showWatchModal">
+    <!-- Header -->
+    <div class="page-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="page-title mb-1 fw-bold">إدارة الفيديوهات</h2>
+            <p class="text-muted mb-0">رفع وإدارة المحتوى التعليمي</p>
+        </div>
+        <button class="btn btn-primary px-4 py-2 rounded-3 fw-bold d-flex align-items-center gap-2 shadow-sm"
+            (click)="openModal()">
+            <i class="fas fa-upload"></i>
+            رفع فيديو جديد
+        </button>
+    </div>
+
+    <!-- Video Grid Layout -->
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-4" *ngFor="let video of videos">
+            <div class="card video-card border-0 shadow-sm rounded-4 h-100 position-relative overflow-hidden">
+                <!-- Thumbnail Area -->
+                <div class="thumbnail-container position-relative cursor-pointer" (click)="watchVideo(video)">
+                    <img [src]="video.thumbnailUrl || video.thumbnail" alt="Video Thumbnail"
+                        class="w-100 thumbnail-img"
+                        onerror="this.src='https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=400&h=250'">
+                    <div class="play-btn-overlay">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                    <div class="duration-badge">
+                        {{ video.duration }}
+                    </div>
+                </div>
+
+                <!-- Video Info -->
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge text-primary bg-blue-soft rounded-pill px-3 py-1 fw-bold">
+                            {{ video.subject }}
+                        </span>
+                        <span class="text-muted fs-xs">
+                            <i class="far fa-eye me-1"></i> {{ video.views }} مشاهدة
+                        </span>
+                    </div>
+
+                    <h5 class="fw-bold mb-2">{{ video.title }}</h5>
+                    <p class="text-muted fs-sm mb-4">{{ video.description }}</p>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2 mt-auto border-top pt-3">
+                        <button class="btn btn-outline-secondary flex-grow-1 rounded-3 py-2 fw-bold"
+                            (click)="editVideo(video)">
+                            <i class="far fa-edit me-1"></i> تعديل
+                        </button>
+                        <button class="btn btn-outline-danger flex-grow-1 rounded-3 py-2 fw-bold"
+                            (click)="deleteVideo(video)">
+                            <i class="far fa-trash-alt me-1"></i> حذف
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upload/Edit Video Modal (Popup) -->
+<div class="modal-backdrop fade show" *ngIf="showModal"></div>
+<div class="modal fade show d-block" *ngIf="showModal" tabindex="-1">
+    <div class="modal-dialog custom-modal modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-bottom px-4 py-3">
+                <h5 class="modal-title fw-bold">{{ isEditMode ? 'تعديل الفيديو' : 'رفع فيديو جديد' }}</h5>
+                <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+            </div>
+
+            <div class="modal-body p-4">
+                <!-- Video Link -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">رابط الفيديو</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i
+                                class="fab fa-youtube text-danger"></i></span>
+                        <input type="text" class="form-control border-start-0 ps-0"
+                            placeholder="https://youtube.com/watch?v=..." [(ngModel)]="newVideo.url" (input)="onUrlChange()">
+                    </div>
+                </div>
+
+                <!-- Thumbnail Preview & Manual Edit -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">الصورة التوضيحية (Thumbnail)</label>
+                    <div class="thumbnail-preview-container mb-2 rounded-3 overflow-hidden border">
+                        <img [src]="newVideo.thumbnailUrl" class="w-100" alt="Preview" 
+                             onerror="this.src='https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=400&h=250'">
+                    </div>
+                    <input type="text" class="form-control form-control-sm" placeholder="رابط صورة الغلاف..." 
+                           [(ngModel)]="newVideo.thumbnailUrl">
+                </div>
+
+                <!-- Title -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">عنوان الفيديو</label>
+                    <input type="text" class="form-control" placeholder="مثال: شرح درس المعادلات"
+                        [(ngModel)]="newVideo.title">
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">الوصف</label>
+                    <textarea class="form-control" rows="3" placeholder="اكتب وصفاً مختصراً لمحتوى الفيديو"
+                        [(ngModel)]="newVideo.description"></textarea>
+                </div>
+
+                <!-- Subject Selection -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">المادة</label>
+                    <select class="form-select" [(ngModel)]="newVideo.subjectId">
+                        <option [ngValue]="null" disabled selected>اختر المادة</option>
+                        <option *ngFor="let sub of subjects" [ngValue]="sub.id">{{ sub.name }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-footer border-top px-4 py-3 justify-content-end gap-2">
+                <button type="button" class="btn btn-light rounded-3 px-4 fw-bold" (click)="closeModal()">إلغاء</button>
+                <button type="button" class="btn btn-primary rounded-3 px-4 fw-bold" (click)="publishVideo()">
+                    {{ isEditMode ? 'حفظ التعديلات' : 'نشر الفيديو' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Video Playback Modal -->
+<div class="modal-backdrop fade show" *ngIf="showWatchModal"></div>
+<div class="modal fade show d-block" *ngIf="showWatchModal" tabindex="-1">
+    <div class="modal-dialog watch-modal modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden bg-black">
+            <div class="ratio ratio-16x9">
+                <iframe *ngIf="selectedVideoUrl" [src]="selectedVideoUrl" allowfullscreen class="rounded-4"></iframe>
+            </div>
+            <button class="btn-close btn-close-white position-absolute top-0 end-0 m-3" (click)="closeWatchModal()"></button>
+        </div>
+    </div>
+</div>

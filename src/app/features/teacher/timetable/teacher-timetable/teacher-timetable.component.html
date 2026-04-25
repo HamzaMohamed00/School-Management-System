@@ -1,0 +1,106 @@
+<div class="page-container">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="page-title">جدول الحصص الخاص بي</h2>
+            <p class="text-muted mb-0">قم بإدارة وتنظيم حصصك الأسبوعية</p>
+        </div>
+        <button class="btn btn-primary d-flex align-items-center gap-2 px-4 rounded-3 shadow-sm" (click)="openAddModal()">
+            <i class="fas fa-plus"></i>
+            <span>إضافة حصة جديدة</span>
+        </button>
+    </div>
+
+    <!-- Timetable Grid -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table timetable-table mb-0">
+                    <thead>
+                        <tr>
+                            <th class="time-col">الوقت</th>
+                            <th *ngFor="let day of daysOfWeek">{{ day }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let time of timeSlots">
+                            <td class="time-cell fw-bold">{{ time }}</td>
+                            <td *ngFor="let day of daysOfWeek" class="session-cell">
+                                <div *ngIf="timetableMatrix[day][time]" 
+                                    [class]="'session-card rounded-3 p-2 shadow-sm ' + getSubjectColor(timetableMatrix[day][time]?.subjectName)">
+                                    <h6 class="mb-1 text-white fw-bold small text-truncate">{{ timetableMatrix[day][time]?.subjectName }}</h6>
+                                    <p class="mb-0 text-white-50 fs-xs text-truncate">
+                                        <i class="fas fa-building me-1"></i>
+                                        {{ timetableMatrix[day][time]?.className }}
+                                    </p>
+                                    <div class="session-badge mt-2 d-flex justify-content-between align-items-center">
+                                        <span>{{ timetableMatrix[day][time]!.startTime | date:'shortTime' }}</span>
+                                        <button class="btn btn-link text-white p-0 delete-btn ms-2" 
+                                                (click)="deleteSession(timetableMatrix[day][time]!.id, $event)"
+                                                title="حذف">
+                                            <i class="fas fa-trash-alt small"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div *ngIf="!timetableMatrix[day][time]" class="empty-cell"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Session Modal -->
+<div class="modal-backdrop fade show" *ngIf="showAddModal"></div>
+<div class="modal fade show d-block" *ngIf="showAddModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 p-4">
+                <h5 class="modal-title fw-bold">إضافة حصة جديدة للجدول</h5>
+                <button type="button" class="btn-close" (click)="showAddModal = false"></button>
+            </div>
+            <form (ngSubmit)="saveSession()">
+                <div class="modal-body p-4 pt-0">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">المادة</label>
+                        <select class="form-select rounded-3" name="subjectId" [(ngModel)]="newSession.subjectId" required>
+                            <option [ngValue]="null" disabled>اختر المادة</option>
+                            <option *ngFor="let sub of subjects" [ngValue]="sub.id">{{ sub.name }}</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">الفصل الدراسي</label>
+                        <select class="form-select rounded-3" name="classRoomId" [(ngModel)]="newSession.classRoomId" required>
+                            <option [ngValue]="null" disabled>اختر الفصل</option>
+                            <option *ngFor="let cls of classrooms" [ngValue]="cls.id">{{ cls.name }}</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">التاريخ</label>
+                            <input type="date" class="form-control rounded-3" name="sessionDate" [(ngModel)]="newSession.sessionDate" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">وقت البدء</label>
+                            <input type="time" class="form-control rounded-3" name="startTime" [(ngModel)]="newSession.startTime" required>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label fw-bold">طريقة تحضير الحضور</label>
+                        <select class="form-select rounded-3" name="attendanceType" [(ngModel)]="newSession.attendanceType" required>
+                            <option value="QR">رمز الاستجابة السريعة ببصمة الوجه (QR + Face ID)</option>
+                            <option value="Manual">يدوي (Manual)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-3 px-4" (click)="showAddModal = false">إلغاء</button>
+                    <button type="submit" class="btn btn-primary rounded-3 px-4" [disabled]="submitting">
+                        {{ submitting ? 'جاري الحفظ...' : 'حفظ في الجدول' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

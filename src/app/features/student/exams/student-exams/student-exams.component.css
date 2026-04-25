@@ -1,0 +1,45 @@
+.student-exams-container {
+    padding: 24px;
+}
+
+.nav-tabs {
+    border-bottom: 2px solid #1e293b;
+}
+
+.nav-link {
+    color: #94a3b8;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+}
+
+.nav-link:hover {
+    color: #e2e8f0;
+}
+
+.nav-link.active-tab {
+    color: #3b82f6 !important;
+    border-bottom: 2px solid #3b82f6 !important;
+}
+
+.exam-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.exam-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+}
+
+.btn-dark-gray {
+    background-color: #334155;
+    color: white;
+    border: none;
+}
+
+.btn-dark-gray:hover {
+    background-color: #475569;
+}

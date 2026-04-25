@@ -1,0 +1,137 @@
+<div class="page-container reports-print-area">
+    <!-- Page Header -->
+    <div class="page-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="page-title mb-1">التقارير والإحصائيات</h2>
+            <p class="text-muted mb-0">تحليل بيانات الحضور والأداء</p>
+        </div>
+        <div class="d-flex gap-2 no-print">
+            <button class="btn btn-outline-secondary rounded-3 px-3 py-2 fw-bold border-2" (click)="exportExcel()">
+                <i class="fas fa-file-excel me-2 text-success"></i>
+                تصدير Excel
+            </button>
+            <button class="btn btn-primary rounded-3 px-3 py-2 fw-bold" (click)="exportPdf()">
+                <i class="fas fa-file-pdf me-2"></i>
+                تصدير PDF
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters Card -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 no-print">
+        <div class="card-body p-4">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label text-secondary fw-semibold small">من تاريخ</label>
+                    <input type="date" class="form-control rounded-3" [(ngModel)]="filter.startDate">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-secondary fw-semibold small">إلى تاريخ</label>
+                    <input type="date" class="form-control rounded-3" [(ngModel)]="filter.endDate">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-secondary fw-semibold small">الصف الدراسي</label>
+                    <select class="form-select rounded-3" [(ngModel)]="filter.gradeName">
+                        <option value="">الكل</option>
+                        <option>الأول الإعدادي</option>
+                        <option>الثاني الإعدادي</option>
+                        <option>الثالث الإعدادي</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-primary w-100 rounded-3 py-2 fw-bold" (click)="loadStats()">
+                        <i class="fas fa-filter me-2"></i>
+                        عرض التقرير
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="loading" class="text-center my-5 no-print">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">جاري التحميل...</span>
+        </div>
+        <p class="mt-2 text-muted">جاري تحميل البيانات...</p>
+    </div>
+
+    <div *ngIf="!loading">
+        <!-- KPI Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card kpi-card border-0 shadow-sm rounded-4 p-4 d-flex flex-row align-items-center gap-3">
+                    <div class="kpi-icon bg-blue-soft text-blue rounded-3">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <div class="text-end flex-grow-1">
+                        <p class="text-muted mb-1 small">الجلسات المكتملة</p>
+                        <h3 class="fw-bold mb-0">{{ stats.completedSessions | number }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card kpi-card border-0 shadow-sm rounded-4 p-4 d-flex flex-row align-items-center gap-3">
+                    <div class="kpi-icon bg-red-soft text-red rounded-3">
+                        <i class="far fa-calendar-times"></i>
+                    </div>
+                    <div class="text-end flex-grow-1">
+                        <p class="text-muted mb-1 small">أيام الغياب</p>
+                        <h3 class="fw-bold mb-0">{{ stats.absenceDays | number }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card kpi-card border-0 shadow-sm rounded-4 p-4 d-flex flex-row align-items-center gap-3">
+                    <div class="kpi-icon bg-green-soft text-green rounded-3">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="text-end flex-grow-1">
+                        <p class="text-muted mb-1 small">متوسط الحضور</p>
+                        <h3 class="fw-bold mb-0">{{ stats.averageAttendance }}%</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row g-3">
+            <!-- Pie Chart -->
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-header bg-white border-0 pt-4 pb-2 px-4">
+                        <h5 class="fw-bold mb-0">توزيع الغياب حسب الصف</h5>
+                    </div>
+                    <div class="card-body p-4" style="min-height: 300px;">
+                        <canvas baseChart *ngIf="stats.absenceByGrade.length > 0"
+                            [data]="pieChartData"
+                            [options]="pieChartOptions"
+                            [type]="pieChartType">
+                        </canvas>
+                        <div *ngIf="stats.absenceByGrade.length === 0" class="text-center text-muted h-100 d-flex flex-column justify-content-center">
+                            لا توجد بيانات غياب كافية للإظهار
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bar Chart / Weekly -->
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-header bg-white border-0 pt-4 pb-2 px-4">
+                        <h5 class="fw-bold mb-0">تحليل الحضور الأسبوعي</h5>
+                    </div>
+                    <div class="card-body p-4" style="min-height: 300px;">
+                        <canvas baseChart *ngIf="stats.weeklyAttendance.length > 0"
+                            [data]="barChartData"
+                            [options]="barChartOptions"
+                            [type]="barChartType">
+                        </canvas>
+                        <div *ngIf="stats.weeklyAttendance.length === 0" class="text-center text-muted h-100 d-flex flex-column justify-content-center">
+                            لا توجد بيانات أسبوعية
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

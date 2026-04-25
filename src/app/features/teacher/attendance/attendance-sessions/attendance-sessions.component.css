@@ -1,0 +1,151 @@
+.page-container {
+    padding: 20px;
+}
+
+.head-title {
+    color: #4b6279;
+    font-size: 1.8rem;
+}
+
+.info-banner {
+    background-color: var(--bg-input);
+    color: var(--text-muted);
+    border-top: 3px solid var(--primary);
+    border-radius: 8px 8px 0 0;
+}
+
+.rounded-not-bottom {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.rounded-not-top {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    margin-top: -1.5rem;
+    border-radius: 0 0 8px 8px;
+    background-color: var(--success);
+    color: var(--text-inverse);
+    padding: 1rem;
+}
+
+.custom-table th {
+    background-color: var(--bg-input);
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.badge-secondary {
+    background-color: var(--text-muted);
+    color: white;
+}
+
+.badge-info {
+    background-color: var(--primary);
+    color: white;
+}
+
+.indicator-blue {
+    background-color: #38bdf8;
+    color: white;
+}
+
+.indicator-green {
+    background-color: #34d399;
+    color: white;
+}
+
+.indicator-red {
+    background-color: var(--danger);
+    color: white;
+}
+
+.btn-manual { background-color: var(--text-muted); color: var(--text-inverse); border: none; }
+.btn-manual:hover { background-color: var(--text-main); color: var(--text-inverse); }
+
+.btn-scan { background-color: var(--primary); color: var(--text-inverse); border: none; }
+.btn-scan:hover { background-color: var(--primary-hover); color: var(--text-inverse); }
+
+.btn-qr { background-color: var(--success); color: var(--text-inverse); border: none; }
+.btn-qr:hover { background-color: #059669; color: var(--text-inverse); }
+
+.btn-cancel { background-color: var(--danger); color: var(--text-inverse); border: none; }
+.btn-cancel:hover { background-color: #dc2626; color: var(--text-inverse); }
+
+.btn-report { background-color: var(--warning); color: var(--text-inverse); border: none; }
+.btn-report:hover { background-color: #d97706; color: var(--text-inverse); }
+
+.action-buttons {
+    min-width: 180px;
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+/* QR Modal Styles */
+.qr-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.qr-modal-content {
+    background: var(--bg-card);
+    padding: 2rem;
+    border-radius: 1.5rem;
+    color: var(--text-main);
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    position: relative;
+    animation: fadeInModal 0.3s ease;
+}
+
+@keyframes fadeInModal {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.blink {
+    animation: blink-anim 1.2s infinite;
+}
+
+@keyframes blink-anim {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+}
+
+.animate-in {
+    animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.avatar i {
+    font-size: 1.2rem;
+}
+
+.qr-img {
+    display: block;
+    margin: 0 auto;
+    border: 1px solid #eee;
+}
+
+.attendance-card-bg {
+    background-color: var(--bg-card) !important;
+    color: var(--text-main);
+}
+
+body.dark-theme tr td {
+    color: #ffffff !important;
+}

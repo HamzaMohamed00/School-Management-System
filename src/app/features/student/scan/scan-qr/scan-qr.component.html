@@ -1,0 +1,82 @@
+<div class="scan-container min-vh-100">
+  <!-- Header -->
+  <div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="page-title fw-bold mb-1">تسجيل الحضور</h2>
+      <p class="text-muted-dark mb-0">امسح رمز QR لتسجيل حضورك في الحصة</p>
+    </div>
+  </div>
+
+  <!-- Current Class Info -->
+  <div class="card bg-card border-theme rounded-4 mb-4 p-4" *ngIf="activeSession">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="text-end">
+        <h5 class="fw-bold mb-1">{{ activeSession.subjectName }}</h5>
+        <small class="text-muted-dark">{{ activeSession.classRoomName }}</small>
+        <div class="d-flex align-items-center gap-3 mt-2">
+          <small class="text-muted-dark"><i class="far fa-clock ms-1"></i>{{ activeSession.startTime | date:'shortTime'
+            }} - {{ activeSession.endTime | date:'shortTime' }}</small>
+          <small class="text-muted-dark"><i class="fas fa-chalkboard-teacher ms-1"></i>{{ activeSession.teacherName
+            }}</small>
+        </div>
+      </div>
+      <span class="badge badge-live rounded-pill px-3 py-2">
+        <i class="fas fa-circle fs-xs me-1 blink"></i>
+        جاري الآن
+      </span>
+    </div>
+  </div>
+
+  <!-- Scanner Area -->
+  <div class="card bg-card border-theme rounded-4 p-4 text-center mb-4 overflow-hidden">
+    <div class="scanner-wrapper mx-auto mb-4" [class.camera-active]="cameraActive">
+      <div id="reader" [hidden]="!cameraActive"></div>
+
+      <div class="scanner-frame" *ngIf="!cameraActive">
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+        <div class="scan-line"></div>
+        <div class="scanner-icon d-flex align-items-center justify-content-center h-100">
+          <i class="fas fa-qrcode text-muted" style="font-size: 5rem; opacity: 0.15;"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback -->
+    <div *ngIf="success" class="alert alert-success rounded-3 py-2 mb-3">
+      <i class="fas fa-check-circle me-2"></i>تم تسجيل الحضور بنجاح!
+    </div>
+    <div *ngIf="error" class="alert alert-danger rounded-3 py-2 mb-3">
+      <i class="fas fa-exclamation-triangle me-2"></i>{{ error }}
+    </div>
+    <div *ngIf="scanning" class="mb-3">
+      <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+      جاري المعالجة...
+    </div>
+
+    <button class="btn btn-primary rounded-3 px-5 py-2 fw-bold mx-auto" (click)="toggleScanner()" [disabled]="scanning">
+      <i class="fas" [class.fa-camera]="!cameraActive" [class.fa-times]="cameraActive"></i>
+      <span class="ms-2">{{ cameraActive ? 'إيقاف الكاميرا' : 'فتح الكاميرا' }}</span>
+    </button>
+  </div>
+
+  <!-- Status Card -->
+  <div class="card bg-card border-theme rounded-4 p-4 text-center" *ngIf="lastAttendance">
+    <div class="status-icon mx-auto mb-3">
+      <i class="fas fa-clock-rotate-left"></i>
+    </div>
+    <h6 class="text-muted-dark mb-1 fw-semibold">إحصائيات حضورك</h6>
+    <div class="d-flex justify-content-center gap-4 mt-2">
+      <div>
+        <div class="text-success fw-bold">{{ lastAttendance.presentCount || 0 }}</div>
+        <small class="text-muted-dark">حاضر</small>
+      </div>
+      <div>
+        <div class="text-danger fw-bold">{{ lastAttendance.absentCount || 0 }}</div>
+        <small class="text-muted-dark">غائب</small>
+      </div>
+    </div>
+  </div>
+</div>

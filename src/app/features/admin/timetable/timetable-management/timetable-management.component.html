@@ -1,0 +1,138 @@
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">جدول الحصص الدراسية</h2>
+            <p class="text-secondary mb-0">إدارة وتنظيم مواعيد الحصص لكل فصل دراسي</p>
+        </div>
+        <div class="d-flex gap-3 align-items-center">
+            <label class="fw-bold small text-muted mb-0">اختر الفصل:</label>
+            <select class="form-select border-0 shadow-sm rounded-3 px-4 py-2" style="min-width: 200px;" 
+                    [(ngModel)]="selectedClassId" (change)="onClassChange()">
+                <option *ngFor="let cls of classes" [value]="cls.id">{{ cls.name }}</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Timetable Grid -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-bordered mb-0 timetable-grid">
+                    <thead>
+                        <tr>
+                            <th class="time-column bg-light text-center py-3">الوقت / اليوم</th>
+                            <th *ngFor="let day of daysOfWeek" class="bg-light text-center py-3">{{ day }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let time of timeSlots">
+                            <td class="time-slot-label bg-light-subtle text-center fw-bold py-4">
+                                {{ time }}
+                            </td>
+                            <td *ngFor="let day of daysOfWeek" class="p-2 position-relative cell-container">
+                                <!-- Existing Session -->
+                                <div *ngIf="timetableMatrix[day][time] as session" 
+                                     class="session-card rounded-3 p-2 shadow-sm border-start border-4 border-primary h-100"
+                                     (click)="openEditModal(session)">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="subject-name fw-bold small d-block mb-1">{{ session.subjectName }}</span>
+                                        <button class="btn btn-link link-danger p-0 border-0 delete-btn" (click)="confirmDelete(session.id); $event.stopPropagation()">
+                                            <i class="fas fa-times-circle"></i>
+                                        </button>
+                                    </div>
+                                    <div class="teacher-name text-muted" style="font-size: 0.7rem;">
+                                        <i class="fas fa-chalkboard-teacher me-1"></i> {{ session.teacherName }}
+                                    </div>
+                                    <div class="session-time mt-1 text-primary fw-bold" style="font-size: 0.65rem;">
+                                        {{ time }} - {{ calculateEndTime(time) }}
+                                    </div>
+                                </div>
+
+                                <!-- Add New Placeholder -->
+                                <div *ngIf="!timetableMatrix[day][time]" 
+                                     class="add-placeholder d-flex align-items-center justify-content-center h-100 rounded-3"
+                                     (click)="openAddModal(day, time)">
+                                    <i class="fas fa-plus-circle opacity-0 hover-opacity-50 text-primary fs-4 transition-all"></i>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div *ngIf="loading" class="loading-overlay d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-backdrop-custom d-flex align-items-center justify-content-center p-3" *ngIf="showModal">
+    <div class="modal-card rounded-4 shadow-lg w-100" style="max-width: 500px;">
+        <div class="modal-header border-bottom p-4">
+            <h5 class="fw-bold mb-0 text-primary">{{ isEditMode ? 'تعديل حصة' : 'إضافة حصة جديدة' }}</h5>
+            <button class="btn-close shadow-none" (click)="showModal = false"></button>
+        </div>
+        <div class="modal-body p-4">
+            <div class="row g-3">
+                <div class="col-12">
+                    <label class="form-label fw-bold small">المادة الدراسية</label>
+                    <select class="form-select rounded-3" [(ngModel)]="currentSession.subjectId">
+                        <option *ngFor="let sub of subjects" [value]="sub.id">{{ sub.name }}</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-bold small">المدرس</label>
+                    <select class="form-select rounded-3" [(ngModel)]="currentSession.teacherId">
+                        <option *ngFor="let t of teachers" [value]="t.id">{{ t.fullName }}</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">وقت البدء</label>
+                    <input type="time" class="form-control rounded-3" [(ngModel)]="currentSession.startTime">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">وقت الانتهاء</label>
+                    <input type="time" class="form-control rounded-3" [(ngModel)]="currentSession.endTime">
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-bold small">طريقة تحضير الحضور</label>
+                    <select class="form-select rounded-3" [(ngModel)]="currentSession.attendanceType">
+                        <option value="QR">رمز الاستجابة السريعة ببصمة الوجه (QR + Face ID)</option>
+                        <option value="Manual">يدوي (Manual)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer border-top p-3 bg-light rounded-bottom-4">
+            <button class="btn btn-link text-secondary text-decoration-none px-4" (click)="showModal = false">إلغاء</button>
+            <button class="btn btn-primary rounded-pill px-5" (click)="saveSession()" [disabled]="submitting">
+                <span *ngIf="!submitting">{{ isEditMode ? 'تحديث' : 'إضافة للجدول' }}</span>
+                <span *ngIf="submitting" class="spinner-border spinner-border-sm"></span>
+            </button>
+        </div>
+    </div>
+</div>
+<!-- Delete Confirmation Modal -->
+<div class="modal-backdrop-custom d-flex align-items-center justify-content-center p-3" *ngIf="showDeleteModal">
+    <div class="modal-card rounded-4 shadow-lg w-100" style="max-width: 400px;">
+        <div class="modal-header border-0 p-4 pb-0 justify-content-center">
+            <div class="icon-circle bg-danger-subtle text-danger mb-2">
+                <i class="fas fa-exclamation-triangle fs-4"></i>
+            </div>
+        </div>
+        <div class="modal-body p-4 text-center">
+            <h5 class="fw-bold mb-2">تأكيد الحذف</h5>
+            <p class="text-secondary mb-0">هل أنت متأكد من حذف هذه الحصة من الجدول؟</p>
+        </div>
+        <div class="modal-footer border-0 p-4 pt-0 gap-2">
+            <button class="btn btn-light rounded-pill flex-grow-1" (click)="showDeleteModal = false">إلغاء</button>
+            <button class="btn btn-danger rounded-pill flex-grow-1" (click)="deleteSession()" [disabled]="submitting">
+                <span *ngIf="!submitting">حذف نهائي</span>
+                <span *ngIf="submitting" class="spinner-border spinner-border-sm"></span>
+            </button>
+        </div>
+    </div>
+</div>

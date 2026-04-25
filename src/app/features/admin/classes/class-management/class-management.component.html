@@ -1,0 +1,88 @@
+<div class="page-container">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="page-title">الفصول الدراسية</h2>
+            <p class="text-muted mb-0">إدارة القاعات والفصول الدراسية وتوزيعها على الصفوف</p>
+        </div>
+        <button class="btn btn-primary d-flex align-items-center gap-2" (click)="openAddModal()">
+            <i class="fas fa-plus"></i>
+            <span>إضافة فصل جديد</span>
+        </button>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table custom-table align-middle mb-0 text-center">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>الفصل</th>
+                            <th>المستوى الدراسي</th>
+                            <th>السعة</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let cls of classes">
+                            <td class="text-muted fw-bold">#{{ cls.id }}</td>
+                            <td><span class="fw-bold text-dark">{{ cls.name }}</span></td>
+                            <td><span class="badge bg-light text-dark border px-3 py-2 rounded-pill">{{
+                                    getGradeName(cls.gradeLevelId) }}</span></td>
+                            <td><span class="text-muted fw-semibold">{{ cls.capacity || 0 }} طالب</span></td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button class="btn btn-sm btn-icon" (click)="openEditModal(cls)">
+                                        <i class="far fa-edit text-primary"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-icon" (click)="deleteClass(cls.id)">
+                                        <i class="far fa-trash-alt text-danger"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop fade show" *ngIf="showModal"></div>
+<div class="modal fade show d-block" *ngIf="showModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 p-4">
+                <h5 class="modal-title fw-bold">{{ isEditMode ? 'تعديل فصل' : 'إضافة فصل جديد' }}</h5>
+                <button type="button" class="btn-close shadow-none" (click)="showModal = false"></button>
+            </div>
+            <form (ngSubmit)="saveClass()">
+                <div class="modal-body p-4 pt-0">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">اسم الفصل</label>
+                        <input type="text" class="form-control rounded-3" name="name" [(ngModel)]="currentClass.name"
+                            required placeholder="مثال: فصل (أ)">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">المستوى الدراسي</label>
+                        <select class="form-select rounded-3" name="gradeLevelId"
+                            [(ngModel)]="currentClass.gradeLevelId" required>
+                            <option *ngFor="let g of grades" [value]="g.id">{{ g.name }}</option>
+                        </select>
+                    </div>
+                    <div class="mb-0">
+                        <label class="form-label fw-semibold">السعة الاستيعابية</label>
+                        <input type="number" class="form-control rounded-3" name="capacity"
+                            [(ngModel)]="currentClass.capacity">
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-3 px-4"
+                        (click)="showModal = false">إلغاء</button>
+                    <button type="submit" class="btn btn-primary rounded-3 px-4" [disabled]="submitting">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

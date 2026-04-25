@@ -1,0 +1,149 @@
+<div class="page-container">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="page-title mb-1">
+                <i class="fas fa-chart-line text-primary me-2"></i>
+                رصد وتقييم الدرجات
+            </h2>
+            <p class="text-muted mb-0 fs-5 mt-2">إضافة تقييم مستمر للطلبة ليظهر مباشرة في ملفاتهم الأكاديمية</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Filtering Form -->
+        <div class="col-lg-4">
+            <div class="premium-card sticky-top" style="top: 2rem;">
+                <div class="card-header-glass pt-4 pb-3 px-4">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-filter text-primary me-2"></i> بيانات الرصد</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form [formGroup]="mainForm" (ngSubmit)="fetchStudents()">
+                        <div class="mb-4">
+                            <label class="form-label text-muted fw-bold">اختر المادة</label>
+                            <select class="form-select custom-select shadow-sm" formControlName="subjectName" (change)="onSubjectChange()"
+                                [class.is-invalid]="mainForm.get('subjectName')?.invalid && mainForm.get('subjectName')?.touched">
+                                <option value="" disabled selected>-- حدد المادة الدراسية --</option>
+                                <option *ngFor="let s of subjects" [value]="s.name">{{ s.name }}</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-muted fw-bold">الفصل الدراسي</label>
+                            <select class="form-select custom-select shadow-sm" formControlName="classRoomId"
+                                [class.is-invalid]="mainForm.get('classRoomId')?.invalid && mainForm.get('classRoomId')?.touched">
+                                <option value="" disabled selected>-- حدد الفصل --</option>
+                                <option *ngFor="let c of classes" [value]="c.id">{{ c.name }}</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-muted fw-bold">نوع التقييم</label>
+                            <select class="form-select custom-select shadow-sm" formControlName="gradeType">
+                                <option *ngFor="let t of gradeTypes" [value]="t">{{ t }}</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-premium w-100 py-3 fw-bold rounded-pill"
+                            [disabled]="mainForm.invalid || loading">
+                            <span *ngIf="!loading"><i class="fas fa-search me-2"></i> جلب كشف الطلاب</span>
+                            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student List -->
+        <div class="col-lg-8">
+            <div class="premium-card min-vh-75">
+                <div class="card-header-glass pt-4 pb-3 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-users text-success me-2"></i> 
+                        كشف رصد درجات الطلاب 
+                        <span class="ms-2 fs-6 text-muted fw-normal" *ngIf="students.length > 0">
+                            - {{ mainForm.value.gradeType }}
+                        </span>
+                    </h5>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-success btn-sm rounded-pill px-3" *ngIf="students.length > 0" 
+                                (click)="saveAllGrades()" [disabled]="submitting">
+                            <i class="fas fa-check-double me-1"></i> حفظ كافة الدرجات
+                        </button>
+                        <span class="badge bg-primary bg-opacity-25 text-primary rounded-pill px-3 py-2" *ngIf="students.length > 0">
+                            {{ students.length }} طالب
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="empty-state py-5 text-center" *ngIf="!loading && students.length === 0">
+                        <div class="empty-icon text-muted mx-auto mb-3" style="font-size: 4rem;">
+                            <i class="fas fa-clipboard-list opacity-50"></i>
+                        </div>
+                        <h6 class="fw-bold mb-2">كشف الطلاب غير مفعل</h6>
+                        <p class="text-muted">اختر المادة والفصل ثم اضغط على "جلب كشف الطلاب" للبدء بالرصد.</p>
+                    </div>
+
+                    <div class="py-5 text-center" *ngIf="loading">
+                        <div class="spinner-grow text-primary" role="status"></div>
+                        <p class="text-muted mt-3">جاري جلب بيانات الطلاب ودرجاتهم السابقة...</p>
+                    </div>
+
+                    <div class="table-responsive" *ngIf="students.length > 0 && !loading">
+                        <table class="table table-hover glass-table mb-0 align-middle">
+                            <thead>
+                                <tr class="bg-dark bg-opacity-10">
+                                    <th class="ps-4">الطالب</th>
+                                    <th class="text-center" style="width: 20%">الدرجة (من 100)</th>
+                                    <th style="width: 35%">ملاحظات أكاديمية</th>
+                                    <th class="text-center" style="width: 15%">الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let s of students" class="glass-row">
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="students-avatar">
+                                                {{ s.fullName?.charAt(0) || 'ش' }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-light">{{ s.fullName }}</div>
+                                                <div class="text-muted small">رقم القيد: #{{ s.id }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="input-group input-group-sm justify-content-center">
+                                            <input type="number" class="form-control grade-input shadow-none" 
+                                                   [(ngModel)]="s.gradeInput" min="0" max="100" placeholder="0">
+                                            <span class="input-group-text bg-dark border-0 text-muted">/ 100</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control notes-input shadow-none" 
+                                               [(ngModel)]="s.notesInput" placeholder="مثال: مستوى متميز، يحتاج للمراجعة...">
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="status-badge" [ngClass]="s.gradeId > 0 ? 'exists' : 'new'">
+                                            <i class="fas" [ngClass]="s.gradeId > 0 ? 'fa-check-circle me-1' : 'fa-plus-circle me-1'"></i>
+                                            {{ s.gradeId > 0 ? 'معدلة' : 'جديدة' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-4 text-end" *ngIf="students.length > 0">
+                <button class="btn btn-premium btn-lg px-5 py-3 rounded-pill fw-bold shadow-lg" 
+                        (click)="saveAllGrades()" [disabled]="submitting">
+                    <span *ngIf="!submitting"><i class="fas fa-cloud-upload-alt me-2"></i> حفظ واعتماد الكشف نهائياً</span>
+                    <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

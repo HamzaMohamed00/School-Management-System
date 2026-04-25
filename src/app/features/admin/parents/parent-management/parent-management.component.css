@@ -1,0 +1,92 @@
+.modal-backdrop-custom {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 1050;
+}
+
+.modal-card {
+    border: none;
+    transform: translateY(0);
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+}
+
+.bg-soft-info { background-color: rgba(13, 202, 240, 0.1); }
+.bg-light-danger { background-color: rgba(220, 53, 69, 0.1); }
+.bg-light-primary { background-color: rgba(13, 110, 253, 0.1); }
+.btn-light-primary { color: #0d6efd; background-color: rgba(13, 110, 253, 0.1); border: none; }
+.btn-light-danger { color: #dc3545; background-color: rgba(220, 53, 69, 0.1); border: none; }
+.btn-icon { width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+
+/* Dark Mode Force Overrides (using ::ng-deep to ensure piercing encapsulation) */
+::ng-deep body.dark-theme .modal-card {
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+}
+
+::ng-deep body.dark-theme .modal-header,
+::ng-deep body.dark-theme .modal-footer {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+::ng-deep body.dark-theme .modal-body {
+    background-color: #1e293b !important;
+}
+
+::ng-deep body.dark-theme .list-group-item {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #ffffff !important;
+}
+
+::ng-deep body.dark-theme .list-group-item:hover {
+    background-color: #334155 !important;
+}
+
+::ng-deep body.dark-theme .list-group-item .text-muted,
+::ng-deep body.dark-theme .list-group-item .text-secondary {
+    color: #94a3b8 !important; /* Muted but visible */
+}
+
+::ng-deep body.dark-theme .list-group-item div[style*="font-size: 0.75rem"],
+::ng-deep body.dark-theme .list-group-item .text-muted {
+    color: #e2e8f0 !important; /* Email and small text in white-ish */
+}
+
+::ng-deep body.dark-theme .input-group-text,
+::ng-deep body.dark-theme .form-control {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+    color: #ffffff !important;
+}
+
+::ng-deep body.dark-theme .form-check-input {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+}
+
+::ng-deep body.dark-theme .badge.bg-light {
+    background-color: #334155 !important;
+    color: #ffffff !important;
+    border: 1px solid #475569 !important;
+}
+
+::ng-deep body.dark-theme .btn-link {
+    color: #94a3b8 !important;
+}

@@ -1,0 +1,270 @@
+<div class="create-exam-page" dir="rtl">
+
+  <!-- Loading overlay -->
+  <div class="loading-overlay" *ngIf="loadingData">
+    <div class="spinner-border text-primary" role="status" style="width:3rem;height:3rem;"></div>
+    <p class="mt-3 fw-bold text-muted">جاري تحميل البيانات...</p>
+  </div>
+
+  <ng-container *ngIf="!loadingData">
+    <!-- Page Header -->
+    <div class="ce-header d-flex align-items-center justify-content-between mb-4">
+      <div>
+        <h2 class="page-title mb-1">
+        <i class="fas fa-edit text-primary me-2"></i> تعديل الاختبار
+      </h2>
+      <p class="text-muted mb-0">قم بتحديث معلومات الاختبار وأسئلته</p>
+      </div>
+      <button class="btn btn-outline-secondary rounded-pill px-4" (click)="cancel()">
+        <i class="fas fa-arrow-right me-1"></i> إلغاء
+      </button>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="step-indicator mb-4">
+      <div class="step-item" [class.active]="currentStep >= 1" [class.done]="currentStep > 1">
+        <div class="step-bubble"><i class="fas fa-info-circle" *ngIf="currentStep > 1"></i><span *ngIf="currentStep <= 1">1</span></div>
+        <span class="step-label">المعلومات الأساسية</span>
+      </div>
+      <div class="step-line" [class.filled]="currentStep > 1"></div>
+      <div class="step-item" [class.active]="currentStep >= 2" [class.done]="currentStep > 2">
+        <div class="step-bubble"><i class="fas fa-check" *ngIf="currentStep > 2"></i><span *ngIf="currentStep <= 2">2</span></div>
+        <span class="step-label">الموعد والمدة</span>
+      </div>
+      <div class="step-line" [class.filled]="currentStep > 2"></div>
+      <div class="step-item" [class.active]="currentStep >= 3">
+        <div class="step-bubble"><span>3</span></div>
+        <span class="step-label">الأسئلة</span>
+      </div>
+    </div>
+
+    <form [formGroup]="examForm" (ngSubmit)="onSubmit()">
+
+      <!-- ════ STEP 1: Basic Info ════ -->
+      <div class="form-card" *ngIf="currentStep === 1" [@stepAnim]>
+        <div class="form-card-title"><i class="fas fa-pen-nib text-primary me-2"></i> معلومات الاختبار</div>
+
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label fw-bold">عنوان الاختبار <span class="text-danger">*</span></label>
+            <input formControlName="title" type="text" class="form-control ce-input"
+              placeholder="مثال: اختبار الفصل الأول — الجبر والإحصاء">
+            <div class="invalid-hint" *ngIf="examForm.get('title')?.invalid && examForm.get('title')?.touched">
+              عنوان الاختبار مطلوب (3 أحرف على الأقل)
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-bold">الفصل الدراسي <span class="text-danger">*</span></label>
+            <select formControlName="classRoomId" class="form-select ce-input">
+              <option value="">— اختر الفصل —</option>
+              <option *ngFor="let c of classes" [value]="c.id">{{ c.name }}</option>
+            </select>
+            <div class="invalid-hint" *ngIf="examForm.get('classRoomId')?.invalid && examForm.get('classRoomId')?.touched">
+              الفصل مطلوب
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-bold">المادة الدراسية <span class="text-danger">*</span></label>
+            <select formControlName="subjectId" class="form-select ce-input">
+              <option value="">— اختر المادة —</option>
+              <option *ngFor="let s of subjects" [value]="s.id">{{ s.name }}</option>
+            </select>
+            <div class="invalid-hint" *ngIf="examForm.get('subjectId')?.invalid && examForm.get('subjectId')?.touched">
+              المادة مطلوبة
+            </div>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label fw-bold">نوع الاختبار</label>
+            <div class="type-group">
+              <label class="type-option" [class.selected]="examForm.get('type')?.value === 'quiz'">
+                <input type="radio" formControlName="type" value="quiz">
+                <i class="fas fa-bolt"></i> اختبار قصير
+              </label>
+              <label class="type-option" [class.selected]="examForm.get('type')?.value === 'midterm'">
+                <input type="radio" formControlName="type" value="midterm">
+                <i class="fas fa-book-open"></i> نصف فصل
+              </label>
+              <label class="type-option" [class.selected]="examForm.get('type')?.value === 'final'">
+                <input type="radio" formControlName="type" value="final">
+                <i class="fas fa-graduation-cap"></i> نهائي
+              </label>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label fw-bold">وصف الاختبار <span class="text-muted fw-normal">(اختياري)</span></label>
+            <textarea formControlName="description" class="form-control ce-input" rows="3"
+              placeholder="تعليمات أو ملاحظات للطلاب حول هذا الاختبار..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ STEP 2: Schedule ════ -->
+      <div class="form-card" *ngIf="currentStep === 2">
+        <div class="form-card-title"><i class="fas fa-calendar-alt text-warning me-2"></i> موعد الاختبار</div>
+
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label fw-bold">تاريخ الاختبار <span class="text-danger">*</span></label>
+            <input type="date" formControlName="date" class="form-control ce-input">
+            <div class="invalid-hint" *ngIf="examForm.get('date')?.invalid && examForm.get('date')?.touched">
+              التاريخ مطلوب
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">وقت البدء <span class="text-danger">*</span></label>
+            <input type="time" formControlName="startTime" class="form-control ce-input">
+            <div class="invalid-hint" *ngIf="examForm.get('startTime')?.invalid && examForm.get('startTime')?.touched">
+              وقت البدء مطلوب
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">وقت الانتهاء <span class="text-danger">*</span></label>
+            <input type="time" formControlName="endTime" class="form-control ce-input">
+            <div class="invalid-hint" *ngIf="examForm.get('endTime')?.invalid && examForm.get('endTime')?.touched">
+              وقت الانتهاء مطلوب
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">المدة (بالدقائق) <span class="text-danger">*</span></label>
+            <input type="number" formControlName="duration" class="form-control ce-input" min="1" placeholder="60">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">الدرجة العظمى</label>
+            <input type="number" formControlName="totalMarks" class="form-control ce-input" min="1">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">درجة النجاح</label>
+            <input type="number" formControlName="passMark" class="form-control ce-input" min="1">
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ STEP 3: Questions ════ -->
+      <div *ngIf="currentStep === 3">
+        <!-- Summary bar -->
+        <div class="q-summary mb-3">
+          <span><i class="fas fa-question-circle text-primary me-1"></i> {{ questions.length }} سؤال</span>
+          <span><i class="fas fa-star text-warning me-1"></i> {{ totalQuestionsMarks }} درجة إجمالية</span>
+          <button type="button" class="btn-add-q" (click)="addQuestion()">
+            <i class="fas fa-plus me-1"></i> إضافة سؤال
+          </button>
+        </div>
+
+        <!-- Empty questions state -->
+        <div class="empty-q text-center py-4" *ngIf="questions.length === 0">
+          <i class="fas fa-pencil-alt text-muted" style="font-size:2.5rem;opacity:0.3"></i>
+          <p class="text-muted mt-2 mb-3">لم تُضَف أي أسئلة بعد</p>
+          <button type="button" class="btn btn-primary rounded-pill px-4" (click)="addQuestion()">
+            <i class="fas fa-plus me-2"></i> إضافة السؤال الأول
+          </button>
+        </div>
+
+        <!-- Questions list -->
+        <div class="question-card" *ngFor="let q of questions; let i = index">
+          <div class="q-card-header">
+            <span class="q-number">سؤال {{ i + 1 }}</span>
+            <div class="d-flex align-items-center gap-2">
+              <span class="q-mark-badge">{{ q.marks }} درجة</span>
+              <button type="button" class="btn-remove-q" (click)="removeQuestion(i)" title="حذف السؤال">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="q-card-body">
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label fw-bold">نص السؤال</label>
+                <textarea [(ngModel)]="q.text" [ngModelOptions]="{standalone: true}"
+                  class="form-control ce-input" rows="2"
+                  placeholder="اكتب نص السؤال هنا..."></textarea>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">نوع السؤال</label>
+                <select [(ngModel)]="q.type" [ngModelOptions]="{standalone: true}"
+                  class="form-select ce-input" (change)="onTypeChange(q)">
+                  <option value="multiple-choice">اختيار من متعدد</option>
+                  <option value="true-false">صح / خطأ</option>
+                  <option value="essay">مقالي</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">الدرجة</label>
+                <input type="number" [(ngModel)]="q.marks" [ngModelOptions]="{standalone: true}"
+                  class="form-control ce-input" min="1">
+              </div>
+
+              <!-- Multiple Choice options -->
+              <div class="col-12" *ngIf="q.type === 'multiple-choice'">
+                <label class="form-label fw-bold">الخيارات (حدد الإجابة الصحيحة)</label>
+                <div class="options-list">
+                  <div class="option-row" *ngFor="let opt of q.options; let j = index; trackBy: trackByIndex">
+                    <input type="radio" [name]="'correct-' + i"
+                      [checked]="q.correctAnswer === j"
+                      (change)="q.correctAnswer = j"
+                      class="option-radio" title="الإجابة الصحيحة">
+                    <input type="text" [(ngModel)]="q.options[j]" [ngModelOptions]="{standalone: true}"
+                      class="form-control ce-input option-input" [placeholder]="'الخيار ' + (j+1)">
+                    <button type="button" class="btn-remove-opt" (click)="removeOption(q, j)"
+                      *ngIf="q.options.length > 2" title="حذف الخيار">
+                      <i class="fas fa-minus"></i>
+                    </button>
+                  </div>
+                  <button type="button" class="btn-add-option" (click)="addOption(q)">
+                    <i class="fas fa-plus me-1"></i> إضافة خيار
+                  </button>
+                </div>
+              </div>
+
+              <!-- True/False -->
+              <div class="col-12" *ngIf="q.type === 'true-false'">
+                <label class="form-label fw-bold">الإجابة الصحيحة</label>
+                <div class="tf-group">
+                  <label class="tf-option" [class.selected]="q.correctAnswer === 0">
+                    <input type="radio" [name]="'tf-' + i" (change)="q.correctAnswer = 0" [checked]="q.correctAnswer === 0">
+                    <i class="fas fa-check-circle text-success me-1"></i> صح
+                  </label>
+                  <label class="tf-option" [class.selected]="q.correctAnswer === 1">
+                    <input type="radio" [name]="'tf-' + i" (change)="q.correctAnswer = 1" [checked]="q.correctAnswer === 1">
+                    <i class="fas fa-times-circle text-danger me-1"></i> خطأ
+                  </label>
+                </div>
+              </div>
+
+              <!-- Essay -->
+              <div class="col-12" *ngIf="q.type === 'essay'">
+                <div class="essay-note">
+                  <i class="fas fa-info-circle text-info me-2"></i>
+                  سؤال مقالي — سيقوم الطالب بكتابة إجابته، ويتم تصحيحه يدوياً من المعلم.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Navigation Buttons ── -->
+      <div class="form-nav mt-4">
+        <button class="btn btn-premium px-5 rounded-pill fw-bold" [disabled]="submitting" (click)="onSubmit()">
+          <i class="fas fa-save me-2" *ngIf="!submitting"></i>
+          <span class="spinner-border spinner-border-sm me-2" *ngIf="submitting"></span>
+          {{ submitting ? 'جاري الحفظ...' : 'حفظ التعديلات' }}
+        </button>
+        <button class="btn btn-light px-4 rounded-pill" (click)="cancel()">
+          إلغاء الأمر
+        </button>
+        <button class="btn btn-light px-4 rounded-pill d-flex align-items-center gap-2" (click)="prevStep()" *ngIf="currentStep > 1">
+          <i class="fas fa-arrow-right"></i> السابق
+        </button>
+        <button type="button" class="btn btn-premium rounded-pill px-4"
+          (click)="nextStep()" *ngIf="currentStep < totalSteps">
+          التالي <i class="fas fa-arrow-left ms-1"></i>
+        </button>
+      </div>
+
+    </form>
+  </ng-container>
+</div>

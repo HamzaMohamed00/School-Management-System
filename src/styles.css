@@ -1,0 +1,160 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* Premium Color Palette */
+:root {
+  /* Light Mode Variables */
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-sidebar: #ffffff;
+  --bg-header: #ffffff;
+  --bg-input: #f1f5f9;
+  
+  --text-main: #1e293b;
+  --text-muted: #475569;
+  --text-inverse: #ffffff;
+  
+  --border-color: #e2e8f0;
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+body.dark-theme {
+  /* Dark Mode Variables */
+  --bg-main: #0f172a;
+  --bg-card: #1e293b;
+  --bg-sidebar: #0f172a;
+  --bg-header: #1e293b;
+  --bg-input: #0f172a;
+  
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-inverse: #0f172a;
+  
+  --border-color: #334155;
+  
+  --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+}
+
+body.dark-theme .page-container {
+  color: #ffffff !important;
+}
+
+body.dark-theme .page-container .text-muted {
+  color: #cbd5e1 !important;
+}
+
+body {
+  margin: 0;
+  font-family: 'Tajawal', 'Inter', -apple-system, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Global Component Overrides using CSS Variables */
+.top-header {
+  background-color: var(--bg-header) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow);
+}
+
+.sidebar {
+  background-color: var(--bg-sidebar) !important;
+  border-left: 1px solid var(--border-color) !important;
+}
+
+.card,
+.modal-content,
+.modal-card,
+.dropdown-menu {
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow) !important;
+  color: var(--text-main) !important;
+}
+
+.search-bar,
+.form-control,
+.form-select,
+.input-group-text {
+  background-color: var(--bg-input) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-main) !important;
+}
+
+.text-muted,
+.text-muted-dark {
+  color: var(--text-muted) !important;
+}
+
+h1, h2, h3, h4, h5, h6, .text-dark, .text-dark-emphasis {
+  color: var(--text-main) !important;
+}
+
+.text-secondary {
+  color: var(--text-muted) !important;
+}
+
+/* Dark Theme Specific Overrides for Bootstrap Utilities */
+body.dark-theme .bg-light, 
+body.dark-theme .btn-light {
+  background-color: #334155 !important;
+  color: #f1f5f9 !important;
+  border-color: #475569 !important;
+}
+
+body.dark-theme .badge.bg-light {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+  border: 1px solid #475569 !important;
+}
+
+.table {
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+}
+
+body.dark-theme .table td, 
+body.dark-theme .table th,
+body.dark-theme .text-dark,
+body.dark-theme .fw-bold {
+  color: #ffffff !important;
+}
+
+.table th,
+.table td {
+  background-color: transparent !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+/* Bottom Nav Theme */
+.bottom-nav,
+.mobile-bottom-sheet {
+  background-color: var(--bg-header) !important;
+  border-top: 1px solid var(--border-color) !important;
+}
+
+/* Common Transitions */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.attendance-card-bg {
+  background-color: var(--bg-card) !important;
+  color: var(--text-main) !important;
+}
+
+body.dark-theme .attendance-card-bg {
+  color: #ffffff !important;
+}
+
+.shadow-premium {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}

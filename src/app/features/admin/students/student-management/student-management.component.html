@@ -1,0 +1,194 @@
+<div class="page-container">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="page-title">إدارة الطلاب</h2>
+            <p class="text-muted mb-0">إجمالي الطلاب: {{ students.length }}</p>
+        </div>
+        <button class="btn btn-primary d-flex align-items-center gap-2" (click)="openAddModal()">
+            <i class="fas fa-plus"></i>
+            <span>إضافة طالب جديد</span>
+        </button>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4">
+            <!-- Toolbar -->
+            <div class="toolbar d-flex gap-3 mb-4">
+                <div class="filter-dropdown">
+                    <select class="form-select rounded-3 py-2" [(ngModel)]="selectedStatus" (change)="applyFilter()">
+                        <option value="all">كل الحالات</option>
+                        <option value="active">نشط</option>
+                        <option value="inactive">غير نشط</option>
+                    </select>
+                </div>
+
+                <div class="search-box flex-grow-1 position-relative">
+                    <i class="fas fa-search search-icon position-absolute top-50 translate-middle-y"></i>
+                    <input type="text" class="form-control rounded-3 py-2 ps-5 pe-3 w-100" placeholder="بحث عن طالب..."
+                        [(ngModel)]="searchTerm" (input)="applyFilter()">
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div *ngIf="loading" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">جاري تحميل الطلاب...</p>
+            </div>
+
+            <!-- Error State -->
+            <div *ngIf="error" class="alert alert-danger mb-4">
+                {{ error }}
+            </div>
+
+            <!-- Data Table -->
+            <div class="table-responsive" *ngIf="!loading">
+                <table class="table custom-table align-middle">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>اسم الطالب</th>
+                            <th>الصف / الفصل</th>
+                            <th>ولي الأمر</th>
+                            <th>الحالة</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let student of filteredStudents">
+                            <td class="text-muted fw-bold">#{{ student.id }}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="avatar bg-light-orange text-orange">
+                                        <i class="fas fa-user-circle fs-3 text-secondary"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">{{ student.fullName }}</h6>
+                                        <small class="text-muted">{{ student.email }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="fw-medium text-dark">{{ student.classRoom?.name || student.classRoomName || 'غير محدد' }}</span></td>
+                            <td><span class="text-secondary fw-semibold">{{ student.parent?.fullName || student.parentName || '—' }}</span></td>
+                            <td>
+                                <span
+                                    [class]="student.isActive ? 'badge bg-success-subtle text-success px-3 py-2 rounded-pill fw-bold' : 'badge bg-danger-subtle text-danger px-3 py-2 rounded-pill fw-bold'">
+                                    {{ student.isActive ? 'نشط' : 'غير نشط' }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-light border" [routerLink]="['/chat', student.userId || student.UserId]" title="تواصل">
+                                        <i class="far fa-comments text-success"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-light border" [routerLink]="['/admin/students/train-face', student.id]" title="تدريب بصمة الوجه">
+                                        <i class="fas fa-portrait text-info"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-light border" (click)="openEditModal(student)" title="تعديل">
+                                        <i class="far fa-edit text-primary"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-light border" (click)="deleteStudent(student.id)" title="حذف">
+                                        <i class="far fa-trash-alt text-danger"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="filteredStudents.length === 0">
+                            <td colspan="6" class="text-center py-4 text-muted">لا يوجد طلاب متطابقين مع البحث</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-backdrop fade show" *ngIf="showModal"></div>
+<div class="modal fade show d-block" *ngIf="showModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 p-4">
+                <h5 class="modal-title fw-bold">{{ isEditMode ? 'تعديل بيانات طالب' : 'إضافة طالب جديد' }}</h5>
+                <button type="button" class="btn-close shadow-none" (click)="closeModal()"></button>
+            </div>
+            <form (ngSubmit)="saveStudent()">
+                <div class="modal-body p-4 pt-0">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">الاسم الكامل</label>
+                        <input type="text" class="form-control rounded-3" name="fullName"
+                            [(ngModel)]="currentStudent.fullName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">البريد الإلكتروني</label>
+                        <input type="email" class="form-control rounded-3" name="email"
+                            [(ngModel)]="currentStudent.email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">رقم الهاتف</label>
+                        <input type="text" class="form-control rounded-3" name="phone"
+                            [(ngModel)]="currentStudent.phone">
+                    </div>
+                    <div class="mb-3" *ngIf="!isEditMode">
+                        <label class="form-label fw-semibold">كلمة المرور</label>
+                        <input type="password" class="form-control rounded-3" name="password"
+                            [(ngModel)]="currentStudent.password">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">الفصل الدراسي</label>
+                            <select class="form-select rounded-3" name="classRoomId"
+                                [(ngModel)]="currentStudent.classRoomId">
+                                <option [ngValue]="null">اختر الفصل...</option>
+                                <option *ngFor="let cls of classRooms" [ngValue]="cls.id">{{ cls.name }}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">ولي الأمر</label>
+                            <select class="form-select rounded-3" name="parentId"
+                                [(ngModel)]="currentStudent.parentId">
+                                <option [ngValue]="null">اختر ولي الأمر...</option>
+                                <option *ngFor="let p of parentsMeta" [ngValue]="p.id">{{ p.fullName }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" name="isActive"
+                            [(ngModel)]="currentStudent.isActive">
+                        <label class="form-check-label fw-semibold">حساب نشط</label>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-3 px-4" (click)="closeModal()"
+                        [disabled]="submitting">إلغاء</button>
+                    <button type="submit" class="btn btn-primary rounded-3 px-4" [disabled]="submitting">
+                        {{ submitting ? 'جاري الحفظ...' : 'حفظ البيانات' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-backdrop fade show" *ngIf="showDeleteModal"></div>
+<div class="modal fade show d-block" *ngIf="showDeleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 p-4 pb-0">
+                <h5 class="modal-title fw-bold text-danger">تأكيد الحذف</h5>
+                <button type="button" class="btn-close shadow-none" (click)="closeDeleteModal()"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="mb-0">هل أنت متأكد من حذف هذا الطالب؟ لا يمكن التراجع عن هذا الإجراء.</p>
+            </div>
+            <div class="modal-footer border-0 p-4 pt-0">
+                <button type="button" class="btn btn-light rounded-3 px-4" (click)="closeDeleteModal()" [disabled]="submitting">إلغاء</button>
+                <button type="button" class="btn btn-danger rounded-3 px-4" (click)="confirmDelete()" [disabled]="submitting">
+                    {{ submitting ? 'جاري الحذف...' : 'حذف نهائي' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

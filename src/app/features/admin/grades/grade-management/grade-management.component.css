@@ -1,0 +1,55 @@
+.student-count-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Light Mode Styling */
+.student-count-badge {
+    background-color: rgba(79, 70, 229, 0.1);
+    color: #4f46e5;
+    border: 1px solid rgba(79, 70, 229, 0.2);
+}
+
+/* Dark Mode Styling Override */
+:host-context(body.dark-theme) .student-count-badge {
+    background-color: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.student-count-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+}
+
+:host-context(body.dark-theme) .student-count-badge:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+
+/* Modal Styling Adjustments */
+:host-context(body.dark-theme) .modal-content {
+    background-color: #1e293b;
+    border-color: #334155;
+}
+
+:host-context(body.dark-theme) .form-label {
+    color: #f1f5f9;
+}
+
+:host-context(body.dark-theme) .form-control {
+    background-color: #0f172a;
+    border-color: #334155;
+    color: #ffffff;
+}
+
+:host-context(body.dark-theme) .form-control:focus {
+    background-color: #0f172a;
+    border-color: #4f46e5;
+}
